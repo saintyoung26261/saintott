@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OTT 공유 현황</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    
+    /* Minimalist Light Palette */
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --surface-sub: #f1f3f5;
+    --ink: #111827;
+    --muted: #6b7280;
+    --subtle: #9ca3af;
+    --line: #e5e7eb;
+    
+    --free: #10b981;
+    --free-bg: #ecfdf5;
+    --busy: #f43f5e;
+    --busy-bg: #fff1f2;
+    --accent: #111827;
+    --accent-ink: #ffffff;
+    
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    --overlay: rgba(17, 24, 39, 0.4);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1117;
+      --surface: #181b24;
+      --surface-sub: #222634;
+      --ink: #f9fafb;
+      --muted: #9ca3af;
+      --subtle: #6b7280;
+      --line: #2a2f3d;
+      
+      --free: #34d399;
+      --free-bg: rgba(52, 211, 153, 0.12);
+      --busy: #fb7185;
+      --busy-bg: rgba(251, 113, 133, 0.12);
+      --accent: #f9fafb;
+      --accent-ink: #0f1117;
+      
+      --shadow-sm: none;
+      --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      --overlay: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1117;
+    --surface: #181b24;
+    --surface-sub: #222634;
+    --ink: #f9fafb;
+    --muted: #9ca3af;
+    --subtle: #6b7280;
+    --line: #2a2f3d;
+    
+    --free: #34d399;
+    --free-bg: rgba(52, 211, 153, 0.12);
+    --busy: #fb7185;
+    --busy-bg: rgba(251, 113, 133, 0.12);
+    --accent: #f9fafb;
+    --accent-ink: #0f1117;
+    
+    --shadow-sm: none;
+    --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    --overlay: rgba(0, 0, 0, 0.7);
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --surface-sub: #f1f3f5;
+    --ink: #111827;
+    --muted: #6b7280;
+    --subtle: #9ca3af;
+    --line: #e5e7eb;
+    
+    --free: #10b981;
+    --free-bg: #ecfdf5;
+    --busy: #f43f5e;
+    --busy-bg: #fff1f2;
+    --accent: #111827;
+    --accent-ink: #ffffff;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    --overlay: rgba(17, 24, 39, 0.4);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Plus Jakarta Sans", "Pretendard", system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 32px;
+  }
+
+  /* Header Section */
+  .header-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .theme-toggle-btn {
+    border: none;
+    background: var(--surface-sub);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .theme-toggle-btn:hover {
+    opacity: 0.8;
+  }
+
+  .sub {
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  /* OTT Tabs */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  
+  .tab {
+    flex: 0 0 auto;
+    border: 1px solid transparent;
+    background: var(--surface);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .tab:hover {
+    color: var(--ink);
+  }
+
+  .tab[aria-selected="true"] {
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .tab-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tab-icon svg { width: 100%; height: 100%; }
+
+  /* Filter Segmented Control */
+  .filter-bar {
+    display: inline-flex;
+    background: var(--surface-sub);
+    padding: 3px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    gap: 2px;
+  }
+  
+  .filter-btn {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 9px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .filter-btn[aria-checked="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Summary Card */
+  .summary {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    box-shadow: var(--shadow-sm);
+  }
+  .summary b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Grid Layout & Profile Cards */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  
+  .card {
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+  }
+  .card:active { transform: scale(0.98); }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card .name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  .card .ott-tag {
+    font-size: 0.75rem;
+    color: var(--subtle);
+    font-weight: 500;
+  }
+
+  /* Dot Status Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    width: fit-content;
+  }
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .card.free .badge {
+    background: var(--free-bg);
+    color: var(--free);
+  }
+  .card.free .badge::before { background: var(--free); }
+
+  .card.busy .badge {
+    background: var(--busy-bg);
+    color: var(--busy);
+  }
+  .card.busy .badge::before { background: var(--busy); }
+
+  .who {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  
+  .meta {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .bar {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--surface-sub);
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    background: var(--free);
+    border-radius: 999px;
+    transition: width 1s linear, background-color 0.3s;
+  }
+  .bar.mid > i { background: #f59e0b; }
+  .bar.low > i { background: var(--busy); }
+
+  .note {
+    margin-top: 24px;
+    color: var(--subtle);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  /* Complaint Section */
+  .complaint-section {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  
+  .complaint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .complaint-header h2 {
+    font-size: 1.05rem;
+    margin: 0;
+    font-weight: 700;
+  }
+  
+  .admin-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .admin-btn:hover { background: var(--surface-sub); }
+
+  .complaint-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .complaint-item {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .complaint-item .c-user { font-weight: 600; font-size: 0.9rem; }
+  .complaint-item .c-date { font-size: 0.75rem; color: var(--subtle); margin-left: 6px; }
+  .complaint-item .c-text { font-size: 0.88rem; margin-top: 6px; color: var(--muted); white-space: pre-wrap; }
+  .complaint-item .c-del {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: var(--busy);
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Footer Section */
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--subtle);
+    font-weight: 500;
+  }
+  footer span {
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  /* Form Controls */
+  input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    transition: all 0.2s ease;
+  }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* Sheet & Modal Overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .overlay.open {
+    display: flex;
+    opacity: 1;
+  }
+
+  .sheet {
+    background: var(--surface);
+    width: 100%;
+    max-width: 440px;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-md);
+    transform: translateY(20px);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .overlay.open .sheet {
+    transform: translateY(0);
+  }
+
+  @media (min-width: 600px) {
+    .overlay { align-items: center; padding: 20px; }
+    .sheet { border-radius: 24px; }
+  }
+
+  .sheet h2 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 700; }
+  .sheet .hint { margin: 0 0 18px; color: var(--muted); font-size: 0.88rem; }
+  .label { display: block; font-weight: 600; margin: 16px 0 8px; font-size: 0.88rem; }
+
+  /* Duration Chips */
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 10px 0;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .chip[aria-checked="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  /* Buttons */
+  .actions { display: flex; gap: 8px; margin-top: 24px; }
+  .btn {
+    flex: 1;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--surface-sub);
+    color: var(--ink);
+    transition: all 0.15s ease;
+  }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    flex: 2;
+  }
+  .btn.danger {
+    background: var(--busy-bg);
+    border-color: transparent;
+    color: var(--busy);
+    flex: 2;
+  }
+  .btn.extend {
+    background: var(--free-bg);
+    border-color: transparent;
+    color: var(--free);
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .info {
+    background: var(--surface-sub);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+  .info p { margin: 2px 0; }
+  .extend-group { display: flex; gap: 8px; width: 100%; margin-top: 8px; }
+
+  :where(button, input, textarea):focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="header-area">
+    <h1>OTT 공유 현황</h1>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="테마 변경">
+      <span id="themeLabel">야간 모드</span>
+    </button>
+  </div>
+  <p class="sub">프로필을 눌러 시간과 이름을 입력한 후 사용하시기 바랍니다.</p>
+
+  <!-- OTT 선택 탭 -->
+  <div class="tabs" id="tabs" role="tablist" aria-label="OTT 서비스 선택"></div>
+
+  <!-- 상태별 필터링 버튼 -->
+  <div class="filter-bar" id="filterBar">
+    <button type="button" class="filter-btn" data-status="all" aria-checked="true">전체</button>
+    <button type="button" class="filter-btn" data-status="free" aria-checked="false">사용 가능</button>
+    <button type="button" class="filter-btn" data-status="busy" aria-checked="false">사용 중</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <div class="grid" id="grid"></div>
+  <p class="note">실시간 데이터베이스와 연결되어 모든 사용자에게 공통으로 공유됩니다.</p>
+
+  <!-- 불편사항 신고 영역 -->
+  <section class="complaint-section">
+    <div class="complaint-header">
+      <h2>불편사항 / 문의하기</h2>
+      <button type="button" class="admin-btn" id="openAdminBtn">조회하기</button>
+    </div>
+    <div class="complaint-form">
+      <input type="text" id="complaintUser" placeholder="이름 (선택)" maxlength="20">
+      <textarea id="complaintText" placeholder="서비스 이용 중 불편했던 점이나 요구사항을 적어주세요."></textarea>
+      <button type="button" class="btn primary" id="submitComplaintBtn">접수하기</button>
+    </div>
+  </section>
+
+  <!-- 하단 만든이 푸터 -->
+  <footer>
+    Made by <span>배성진</span>
+  </footer>
+</main>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle" id="sheet"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBN2pVcI6FKhfHmFAQkdf-YG-P6ZLlEj-E",
+    authDomain: "saintyoung.firebaseapp.com",
+    databaseURL: "https://saintyoung-default-rtdb.firebaseio.com",
+    projectId: "saintyoung",
+    storageBucket: "saintyoung.firebasestorage.app",
+    messagingSenderId: "773958909607",
+    appId: "1:773958909607:web:9587fae1b503c5f1436582",
+    measurementId: "G-Z3V4GT8QVT"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const ADMIN_KEY = "1234";
+
+  /* 테마 관리 */
+  const THEME_KEY = 'ott-board-theme';
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const themeLabel = document.getElementById('themeLabel');
+
+  function getPreferredTheme() {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    themeLabel.textContent = theme === 'dark' ? '주간 모드' : '야간 모드';
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  applyTheme(getPreferredTheme());
+
+  /* 서비스 로고 및 아이콘 */
+  const LOGOS = {
+    ALL: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>`,
+    NETFLIX: `<svg viewBox="0 0 24 24" fill="#E50914"><path d="M5.398 0v24h4.192V11.213l5.008 12.787h4.004V0h-4.192v12.787L9.402 0z"/></svg>`,
+    DISNEY: `<svg viewBox="0 0 24 24" fill="#113CCF"><path d="M4.5 13.5c1.2-2.3 3.8-4.5 7.5-4.5s6.3 2.2 7.5 4.5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm-2 11.5v-5l4.5 2.5z"/></svg>`,
+    TVING: `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#FF153C"/><text x="12" y="16" fill="#FFF" font-weight="900" font-size="12" text-anchor="middle" font-family="sans-serif">T</text></svg>`,
+    WATCHA: `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#FF0558"/><text x="12" y="16" fill="#FFF" font-weight="900" font-size="12" text-anchor="middle" font-family="sans-serif">W</text></svg>`,
+    ETC: `<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/></svg>`
+  };
+
+  const OTT_GROUPS = [
+    { id: 'all', name: '전체', logo: LOGOS.ALL, profiles: [] },
+    { id: 'nf1', name: '넷플1', logo: LOGOS.NETFLIX, profiles: ['크라피카', '곤', '키르아'] },
+    { id: 'nf2', name: '넷플2', logo: LOGOS.NETFLIX, profiles: ['옐로우', '레오리오'] },
+    { id: 'dp', name: '디플', logo: LOGOS.DISNEY, profiles: ['닉', '올라프', '베이맥스', '게리'] },
+    { id: 'tv1', name: '티빙1', logo: LOGOS.TVING, profiles: ['한화', 'LG', '롯데', '삼성'] },
+    { id: 'tv2', name: '티빙2', logo: LOGOS.TVING, profiles: ['SSG', '기아', '두산', '키움'] },
+    { id: 'wc', name: '왓챠', logo: LOGOS.WATCHA, profiles: ['루미', '진우', '조이', '미라'] },
+    { id: 'etc', name: '기타', logo: LOGOS.ETC, profiles: ['개리', '고양이', '다람쥐', '덴지', '레제', '마키마', '머드', '부엉이', '척', '파워', '판다'] }
+  ];
+
+  const ALL_PROFILES = [];
+  OTT_GROUPS.forEach(g => {
+    if (g.id !== 'all') {
+      g.profiles.forEach(p => {
+        if (!ALL_PROFILES.includes(p)) ALL_PROFILES.push(p);
+      });
+    }
+  });
+  OTT_GROUPS[0].profiles = ALL_PROFILES;
+
+  function getProfileOtt(p) {
+    for (let i = 1; i < OTT_GROUPS.length; i++) {
+      if (OTT_GROUPS[i].profiles.includes(p)) return OTT_GROUPS[i].name;
+    }
+    return '기타';
+  }
+
+  const DURATIONS = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4];
+  const NAME_KEY = 'ott-board-last-name';
+  const SESSION_KEY = 'ott-board-device-session';
+
+  let currentCategory = 'all';
+  let statusFilter = 'all';
+  let state = {};
+  let complaintsData = {};
+  let hours = null;
+
+  function getDeviceSessionId() {
+    let sid = localStorage.getItem(SESSION_KEY);
+    if (!sid) {
+      sid = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+      localStorage.setItem(SESSION_KEY, sid);
+    }
+    return sid;
+  }
+
+  const stateRef = ref(db, 'ott_state');
+  onValue(stateRef, (snapshot) => {
+    state = snapshot.val() || {};
+    render();
+  });
+
+  const complaintsRef = ref(db, 'complaints');
+  onValue(complaintsRef, (snapshot) => {
+    complaintsData = snapshot.val() || {};
+  });
+
+  function saveStateToDB() { set(ref(db, 'ott_state'), state); }
+  function lastName() { try { return localStorage.getItem(NAME_KEY) || ''; } catch (e) { return ''; } }
+  function saveName(n) { try { localStorage.setItem(NAME_KEY, n); } catch (e) {} }
+
+  function usage(p) {
+    var u = state[p];
+    if (u && u.end > Date.now()) return u;
+    return null;
+  }
+
+  function purge() {
+    var changed = false;
+    Object.keys(state).forEach(function (k) {
+      if (state[k].end <= Date.now()) { delete state[k]; changed = true; }
+    });
+    if (changed) saveStateToDB();
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function clock(ms) { var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function formatDate(ms) {
+    var d = new Date(ms);
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+  function remain(ms) {
+    var m = Math.max(1, Math.ceil((ms - Date.now()) / 60000));
+    var h = Math.floor(m / 60), r = m % 60;
+    if (h && r) return h + '시간 ' + r + '분';
+    if (h) return h + '시간';
+    return r + '분';
+  }
+  function hoursLabel(h) {
+    if (h === Math.floor(h)) return h + '시간';
+    return h < 1 ? '30분' : Math.floor(h) + '시간 30분';
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function paint(u, meta, bar, fill) {
+    var pct = Math.max(0, Math.min(100, ((u.end - Date.now()) / (u.end - u.start)) * 100));
+    fill.style.width = pct + '%';
+    bar.className = 'bar live-bar' + (pct <= 15 ? ' low' : pct <= 40 ? ' mid' : '');
+    meta.textContent = clock(u.end) + ' 종료 (' + remain(u.end) + ' 남음)';
+  }
+
+  function tick() {
+    var expired = false;
+    Array.prototype.forEach.call(document.querySelectorAll('.card.busy'), function (card) {
+      var p = card.getAttribute('data-p');
+      var u = usage(p);
+      if (!u) { expired = true; return; }
+      paint(u, card.querySelector('.live-meta'), card.querySelector('.live-bar'), card.querySelector('.live-bar > i'));
+    });
+    if (expired) render();
+  }
+
+  document.querySelectorAll('#filterBar .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#filterBar .filter-btn').forEach(b => b.setAttribute('aria-checked', 'false'));
+      btn.setAttribute('aria-checked', 'true');
+      statusFilter = btn.getAttribute('data-status');
+      render();
+    });
+  });
+
+  function renderTabs() {
+    const tabsContainer = document.getElementById('tabs');
+    tabsContainer.textContent = '';
+    OTT_GROUPS.forEach(g => {
+      const btn = el('button', 'tab');
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', currentCategory === g.id ? 'true' : 'false');
+      
+      const iconSpan = el('span', 'tab-icon');
+      iconSpan.innerHTML = g.logo;
+      btn.appendChild(iconSpan);
+      btn.appendChild(document.createTextNode(g.name));
+
+      btn.addEventListener('click', () => {
+        currentCategory = g.id;
+        renderTabs();
+        render();
+      });
+      tabsContainer.appendChild(btn);
+    });
+  }
+
+  function render() {
+    purge();
+    const activeGroup = OTT_GROUPS.find(g => g.id === currentCategory) || OTT_GROUPS[0];
+    let targetProfiles = activeGroup.profiles;
+
+    if (statusFilter === 'free') {
+      targetProfiles = targetProfiles.filter(p => !usage(p));
+    } else if (statusFilter === 'busy') {
+      targetProfiles = targetProfiles.filter(p => usage(p));
+    }
+
+    var freeList = activeGroup.profiles.filter(function (p) { return !usage(p); });
+    var sum = document.getElementById('summary');
+    sum.textContent = '';
+    if (freeList.length) {
+      sum.appendChild(document.createTextNode(`사용 가능 프로필 ${freeList.length}개: `));
+      sum.appendChild(el('b', null, freeList.join(', ')));
+    } else {
+      var soonest = Math.min.apply(null, activeGroup.profiles.map(function (p) { return usage(p) ? usage(p).end : Infinity; }));
+      if (soonest !== Infinity) {
+        sum.appendChild(document.createTextNode(`사용 가능한 프로필이 없습니다. 가장 빠른 시각: `));
+        sum.appendChild(el('b', null, clock(soonest)));
+      } else {
+        sum.appendChild(document.createTextNode(`등록된 프로필이 없습니다.`));
+      }
+    }
+
+    var grid = document.getElementById('grid');
+    grid.textContent = '';
+    
+    if (targetProfiles.length === 0) {
+      var emptyMsg = el('p', 'sub', '해당 조건에 맞는 프로필이 없습니다.');
+      emptyMsg.style.gridColumn = '1 / -1';
+      emptyMsg.style.textAlign = 'center';
+      emptyMsg.style.padding = '32px 0';
+      grid.appendChild(emptyMsg);
+      return;
+    }
+
+    targetProfiles.forEach(function (p) {
+      var u = usage(p);
+      var card = el('button', 'card ' + (u ? 'busy' : 'free'));
+      
+      var cardTop = el('div', 'card-top');
+      cardTop.appendChild(el('span', 'name', p));
+      if (currentCategory === 'all') {
+        cardTop.appendChild(el('span', 'ott-tag', getProfileOtt(p)));
+      }
+      card.appendChild(cardTop);
+
+      card.appendChild(el('span', 'badge', u ? '사용 중' : '사용 가능'));
+      
+      if (u) {
+        card.appendChild(el('span', 'who', u.user));
+        var meta = el('span', 'meta live-meta', clock(u.end) + ' 종료 (' + remain(u.end) + ' 남음)');
+        card.appendChild(meta);
+        var bar = el('span', 'bar live-bar'); var fill = document.createElement('i');
+        bar.appendChild(fill); card.appendChild(bar);
+        card.setAttribute('data-p', p);
+        paint(u, meta, bar, fill);
+      } else {
+        card.appendChild(el('span', 'meta', '눌러서 사용 신청'));
+      }
+      card.addEventListener('click', function () { openSheet(p); });
+      grid.appendChild(card);
+    });
+  }
+
+  function openSheet(p) {
+    hours = null;
+    var sheet = document.getElementById('sheet');
+    sheet.textContent = '';
+    var u = usage(p);
+
+    var title = el('h2', null, `${p} (${getProfileOtt(p)})`);
+    title.id = 'dlgTitle';
+    sheet.appendChild(title);
+
+    if (u) {
+      var isOwner = u.deviceId === getDeviceSessionId();
+
+      sheet.appendChild(el('p', 'hint', isOwner ? '내가 사용 중인 프로필입니다.' : '다른 사용자가 사용 중인 프로필입니다.'));
+      var info = el('div', 'info');
+      info.appendChild(el('p', null, '사용자: ' + u.user));
+      info.appendChild(el('p', null, clock(u.end) + ' 종료 (' + remain(u.end) + ' 남음)'));
+      sheet.appendChild(info);
+
+      var acts = el('div', 'actions');
+      var close = el('button', 'btn', '닫기');
+      close.addEventListener('click', closeSheet);
+      acts.appendChild(close);
+
+      if (isOwner) {
+        var extGroup = el('div', 'extend-group');
+        var ext30 = el('button', 'btn extend', '+30분 연장');
+        ext30.addEventListener('click', function () {
+          state[p].end += 30 * 60000;
+          saveStateToDB();
+          openSheet(p);
+        });
+
+        var ext60 = el('button', 'btn extend', '+1시간 연장');
+        ext60.addEventListener('click', function () {
+          state[p].end += 60 * 60000;
+          saveStateToDB();
+          openSheet(p);
+        });
+
+        extGroup.appendChild(ext30);
+        extGroup.appendChild(ext60);
+        
+        var end = el('button', 'btn danger', '사용 종료');
+        end.addEventListener('click', function () {
+          delete state[p];
+          saveStateToDB();
+          closeSheet();
+        });
+
+        acts.appendChild(end);
+        sheet.appendChild(acts);
+        sheet.appendChild(extGroup);
+      } else {
+        sheet.appendChild(acts);
+      }
+
+    } else {
+      sheet.appendChild(el('p', 'hint', '사용할 시간과 이름을 입력하세요.'));
+      sheet.appendChild(el('span', 'label', '사용 시간'));
+      var chips = el('div', 'chips');
+      chips.setAttribute('role', 'radiogroup');
+      chips.setAttribute('aria-label', '사용 시간');
+      DURATIONS.forEach(function (h) {
+        var c = el('button', 'chip', hoursLabel(h));
+        c.setAttribute('role', 'radio');
+        c.setAttribute('aria-checked', 'false');
+        c.addEventListener('click', function () {
+          hours = h;
+          Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute('aria-checked', 'false'); });
+          c.setAttribute('aria-checked', 'true');
+          check();
+        });
+        chips.appendChild(c);
+      });
+      sheet.appendChild(chips);
+
+      var lab = el('label', 'label', '이름'); lab.setAttribute('for', 'nameInput');
+      sheet.appendChild(lab);
+      var input = document.createElement('input');
+      input.type = 'text'; input.id = 'nameInput'; input.maxLength = 20;
+      input.placeholder = '이름을 입력하세요'; input.autocomplete = 'off';
+      input.value = lastName();
+      sheet.appendChild(input);
+
+      var acts2 = el('div', 'actions');
+      var cancel = el('button', 'btn', '취소');
+      cancel.addEventListener('click', closeSheet);
+      var ok = el('button', 'btn primary', '확인');
+      ok.disabled = true;
+      acts2.appendChild(cancel); acts2.appendChild(ok);
+      sheet.appendChild(acts2);
+
+      function check() { 
+        ok.disabled = !(hours && input.value.trim()); 
+      }
+
+      function submit() {
+        var name = input.value.trim();
+        if (!hours || !name) return;
+
+        var currentDeviceId = getDeviceSessionId();
+
+        var existingProfile = Object.keys(state).find(function (key) {
+          var u = usage(key);
+          if (!u) return false;
+          return u.deviceId === currentDeviceId || u.user.toLowerCase() === name.toLowerCase();
+        });
+
+        if (existingProfile) {
+          alert("이미 '" + existingProfile + "' 프로필을 사용 중입니다.\n한 사람당 하나의 계정만 등록할 수 있습니다.");
+          return;
+        }
+
+        var now = Date.now();
+        state[p] = { 
+          user: name, 
+          start: now, 
+          end: now + hours * 3600000,
+          deviceId: currentDeviceId
+        };
+        saveStateToDB();
+        saveName(name);
+        closeSheet();
+      }
+
+      input.addEventListener('input', check);
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+      ok.addEventListener('click', submit);
+      check();
+    }
+
+    var ov = document.getElementById('overlay');
+    ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSheet() {
+    var ov = document.getElementById('overlay');
+    ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true');
+  }
+
+  /* 불편사항 접수 */
+  document.getElementById('submitComplaintBtn').addEventListener('click', () => {
+    const user = document.getElementById('complaintUser').value.trim() || '익명';
+    const text = document.getElementById('complaintText').value.trim();
+
+    if (!text) {
+      alert("불편사항 내용을 입력해주세요.");
+      return;
+    }
+
+    push(ref(db, 'complaints'), {
+      user: user,
+      text: text,
+      timestamp: Date.now()
+    }).then(() => {
+      alert("불편사항이 정상적으로 접수되었습니다.");
+      document.getElementById('complaintText').value = '';
+    }).catch((err) => {
+      alert("접수 중 오류가 발생했습니다: " + err.message);
+    });
+  });
+
+  /* 관리자 모드 */
+  document.getElementById('openAdminBtn').addEventListener('click', () => { openAdminKeySheet(); });
+
+  function openAdminKeySheet() {
+    var sheet = document.getElementById('sheet');
+    sheet.textContent = '';
+
+    var title = el('h2', null, '관리자 인증');
+    title.id = 'dlgTitle';
+    sheet.appendChild(title);
+
+    var input = document.createElement('input');
+    input.type = 'password';
+    input.placeholder = '비밀키 입력';
+    sheet.appendChild(input);
+
+    var acts = el('div', 'actions');
+    var cancel = el('button', 'btn', '취소');
+    cancel.addEventListener('click', closeSheet);
+
+    var confirmBtn = el('button', 'btn primary', '확인');
+    confirmBtn.addEventListener('click', () => {
+      if (input.value === ADMIN_KEY) {
+        openComplaintsListSheet();
+      } else {
+        alert("키코드가 올바르지 않습니다.");
+      }
+    });
+
+    acts.appendChild(cancel);
+    acts.appendChild(confirmBtn);
+    sheet.appendChild(acts);
+
+    var ov = document.getElementById('overlay');
+    ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false');
+  }
+
+  function openComplaintsListSheet() {
+    var sheet = document.getElementById('sheet');
+    sheet.textContent = '';
+
+    var title = el('h2', null, '접수된 불편사항');
+    title.id = 'dlgTitle';
+    sheet.appendChild(title);
+
+    const keys = Object.keys(complaintsData);
+    if (keys.length === 0) {
+      sheet.appendChild(el('p', 'hint', '접수된 불편사항이 없습니다.'));
+    } else {
+      sheet.appendChild(el('p', 'hint', `총 ${keys.length}건의 메시지`));
+      keys.sort((a, b) => complaintsData[b].timestamp - complaintsData[a].timestamp);
+
+      keys.forEach(key => {
+        const item = complaintsData[key];
+        const box = el('div', 'complaint-item');
+        
+        const top = el('div');
+        top.appendChild(el('span', 'c-user', item.user));
+        top.appendChild(el('span', 'c-date', formatDate(item.timestamp)));
+        box.appendChild(top);
+
+        box.appendChild(el('div', 'c-text', item.text));
+
+        const delBtn = el('button', 'c-del', '삭제');
+        delBtn.addEventListener('click', () => {
+          if (confirm("이 항목을 삭제하시겠습니까?")) {
+            remove(ref(db, 'complaints/' + key)).then(() => {
+              openComplaintsListSheet();
+            });
+          }
+        });
+        box.appendChild(delBtn);
+
+        sheet.appendChild(box);
+      });
+    }
+
+    var acts = el('div', 'actions');
+    var close = el('button', 'btn', '닫기');
+    close.addEventListener('click', closeSheet);
+    acts.appendChild(close);
+    sheet.appendChild(acts);
+  }
+
+  document.getElementById('overlay').addEventListener('click', function (e) {
+    if (e.target === this) closeSheet();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
+
+  renderTabs();
+  setInterval(tick, 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+</script>
+</body>
+</html>
