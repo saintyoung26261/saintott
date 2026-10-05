@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>OTT 공유 현황</title>
+<title>세인영 OTT 공유 현황</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -585,7 +585,7 @@
 <body>
 <main>
   <div class="header-area">
-    <h1>OTT 공유 현황</h1>
+    <h1>세인영 OTT 공유 현황</h1>
     <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="테마 변경">
       <span id="themeLabel">야간 모드</span>
     </button>
@@ -621,7 +621,7 @@
 
   <!-- 하단 만든이 푸터 -->
   <footer>
-    Made by <span>배성진</span>
+    Made for <span>세인영</span> by <span>배성진</span>
   </footer>
 </main>
 
@@ -961,7 +961,7 @@
       }
 
     } else {
-      sheet.appendChild(el('p', 'hint', '사용할 시간과 이름을 입력하세요.'));
+      sheet.appendChild(el('p', 'hint', '사용할 시간과 이름+학번 뒤 3자리를 입력하세요.'));
       sheet.appendChild(el('span', 'label', '사용 시간'));
       var chips = el('div', 'chips');
       chips.setAttribute('role', 'radiogroup');
@@ -980,11 +980,11 @@
       });
       sheet.appendChild(chips);
 
-      var lab = el('label', 'label', '이름'); lab.setAttribute('for', 'nameInput');
+      var lab = el('label', 'label', '이름+학번 뒤 3자리'); lab.setAttribute('for', 'nameInput');
       sheet.appendChild(lab);
       var input = document.createElement('input');
       input.type = 'text'; input.id = 'nameInput'; input.maxLength = 20;
-      input.placeholder = '이름을 입력하세요'; input.autocomplete = 'off';
+      input.placeholder = '이름과 학번 뒤 3자리를 입력하세요'; input.autocomplete = 'off';
       input.value = lastName();
       sheet.appendChild(input);
 
