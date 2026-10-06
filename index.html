@@ -744,7 +744,6 @@
     complaintsData = snapshot.val() || {};
   });
 
-  function saveStateToDB() { set(ref(db, 'ott_state'), state); }
   function lastName() { try { return localStorage.getItem(NAME_KEY) || ''; } catch (e) { return ''; } }
   function saveName(n) { try { localStorage.setItem(NAME_KEY, n); } catch (e) {} }
 
@@ -754,12 +753,13 @@
     return null;
   }
 
+  // 만료된 세션만 DB에서 개별 삭제 (전체 덮어쓰기 X)
   function purge() {
-    var changed = false;
     Object.keys(state).forEach(function (k) {
-      if (state[k].end <= Date.now()) { delete state[k]; changed = true; }
+      if (state[k].end <= Date.now()) {
+        remove(ref(db, 'ott_state/' + k));
+      }
     });
-    if (changed) saveStateToDB();
   }
 
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
@@ -801,7 +801,7 @@
       if (!u) { expired = true; return; }
       paint(u, card.querySelector('.live-meta'), card.querySelector('.live-bar'), card.querySelector('.live-bar > i'));
     });
-    if (expired) render();
+    if (expired) purge();
   }
 
   document.querySelectorAll('#filterBar .filter-btn').forEach(btn => {
@@ -931,15 +931,15 @@
         var extGroup = el('div', 'extend-group');
         var ext30 = el('button', 'btn extend', '+30분 연장');
         ext30.addEventListener('click', function () {
-          state[p].end += 30 * 60000;
-          saveStateToDB();
+          var updatedData = Object.assign({}, state[p], { end: state[p].end + 30 * 60000 });
+          set(ref(db, 'ott_state/' + p), updatedData);
           openSheet(p);
         });
 
         var ext60 = el('button', 'btn extend', '+1시간 연장');
         ext60.addEventListener('click', function () {
-          state[p].end += 60 * 60000;
-          saveStateToDB();
+          var updatedData = Object.assign({}, state[p], { end: state[p].end + 60 * 60000 });
+          set(ref(db, 'ott_state/' + p), updatedData);
           openSheet(p);
         });
 
@@ -948,8 +948,7 @@
         
         var end = el('button', 'btn danger', '사용 종료');
         end.addEventListener('click', function () {
-          delete state[p];
-          saveStateToDB();
+          remove(ref(db, 'ott_state/' + p));
           closeSheet();
         });
 
@@ -1018,13 +1017,15 @@
         }
 
         var now = Date.now();
-        state[p] = { 
+        
+        // 특정 프로필 경로만 독립적으로 set
+        set(ref(db, 'ott_state/' + p), {
           user: name, 
           start: now, 
           end: now + hours * 3600000,
           deviceId: currentDeviceId
-        };
-        saveStateToDB();
+        });
+
         saveName(name);
         closeSheet();
       }
@@ -1157,7 +1158,7 @@
 
   renderTabs();
   setInterval(tick, 1000);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) purge(); });
 </script>
 </body>
 </html>
