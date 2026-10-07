@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>세인영 OTT 공유 현황</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +29,10 @@
     --free-bg: #ecfdf5;
     --busy: #f43f5e;
     --busy-bg: #fff1f2;
+    --warn: #f59e0b;
+    --warn-bg: #fffbeb;
+    --info: #3b82f6;
+    --info-bg: #eff6ff;
     --accent: #111827;
     --accent-ink: #ffffff;
     
@@ -52,6 +59,10 @@
       --free-bg: rgba(52, 211, 153, 0.12);
       --busy: #fb7185;
       --busy-bg: rgba(251, 113, 133, 0.12);
+      --warn: #fbbf24;
+      --warn-bg: rgba(251, 191, 36, 0.12);
+      --info: #60a5fa;
+      --info-bg: rgba(96, 165, 250, 0.12);
       --accent: #f9fafb;
       --accent-ink: #0f1117;
       
@@ -74,6 +85,10 @@
     --free-bg: rgba(52, 211, 153, 0.12);
     --busy: #fb7185;
     --busy-bg: rgba(251, 113, 133, 0.12);
+    --warn: #fbbf24;
+    --warn-bg: rgba(251, 191, 36, 0.12);
+    --info: #60a5fa;
+    --info-bg: rgba(96, 165, 250, 0.12);
     --accent: #f9fafb;
     --accent-ink: #0f1117;
     
@@ -95,6 +110,10 @@
     --free-bg: #ecfdf5;
     --busy: #f43f5e;
     --busy-bg: #fff1f2;
+    --warn: #f59e0b;
+    --warn-bg: #fffbeb;
+    --info: #3b82f6;
+    --info-bg: #eff6ff;
     --accent: #111827;
     --accent-ink: #ffffff;
     
@@ -445,6 +464,22 @@
     color: var(--muted);
   }
 
+  .log-link {
+    display: block;
+    margin: 18px auto 0;
+    background: none;
+    border: none;
+    color: var(--subtle);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    opacity: 0.7;
+  }
+  .log-link:hover { background: var(--surface-sub); opacity: 1; }
+
   /* Form Controls */
   input[type="text"], input[type="password"], textarea {
     width: 100%;
@@ -493,6 +528,7 @@
     transform: translateY(20px);
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  .sheet.wide { max-width: 560px; }
   .overlay.open .sheet {
     transform: translateY(0);
   }
@@ -576,6 +612,57 @@
   .info p { margin: 2px 0; }
   .extend-group { display: flex; gap: 8px; width: 100%; margin-top: 8px; }
 
+  /* Usage Log Viewer */
+  .log-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .log-filter-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .log-filter-btn[aria-checked="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .log-item {
+    background: var(--surface-sub);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .log-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .log-type {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .log-type.t-start { background: var(--free-bg); color: var(--free); }
+  .log-type.t-extend { background: var(--info-bg); color: var(--info); }
+  .log-type.t-end_button { background: var(--warn-bg); color: var(--warn); }
+  .log-type.t-expired { background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+  .log-type.t-vanished { background: var(--busy-bg); color: var(--busy); }
+  .log-who { font-size: 0.88rem; font-weight: 700; }
+  .log-time { margin-left: auto; font-size: 0.74rem; color: var(--subtle); }
+  .log-detail { margin-top: 6px; font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+  .log-empty { color: var(--muted); font-size: 0.88rem; text-align: center; padding: 24px 0; }
+
   :where(button, input, textarea):focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 2px;
@@ -622,6 +709,7 @@
   <!-- 하단 만든이 푸터 -->
   <footer>
     Made for <span>세인영</span> by <span>배성진</span>
+    <button type="button" class="log-link" id="openLogBtn">사용 로그</button>
   </footer>
 </main>
 
@@ -631,7 +719,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, onValue, set, push, remove, runTransaction, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAHXocwDHnG-U04R37_1sxmVuZi5nDtxV4",
@@ -648,6 +736,15 @@
   const db = getDatabase(app);
 
   const ADMIN_KEY = "1234";
+  const LOG_PIN = "1357";
+
+  /* 서버 시간 보정: 기기 시계가 틀려도 다른 사람의 사용 정보를 잘못 만료시키지 않도록 함 */
+  let serverOffset = 0;
+  function now() { return Date.now() + serverOffset; }
+  onValue(ref(db, '.info/serverTimeOffset'), (snap) => {
+    serverOffset = snap.val() || 0;
+    render();
+  });
 
   /* 테마 관리 */
   const THEME_KEY = 'ott-board-theme';
@@ -722,6 +819,7 @@
   let statusFilter = 'all';
   let state = {};
   let complaintsData = {};
+  let logsData = {};
   let hours = null;
 
   function getDeviceSessionId() {
@@ -733,9 +831,49 @@
     return sid;
   }
 
+  /* ===== 사용 로그 =====
+     usage_logs/{시작시각}_{프로필}_{종류} 형태의 고정 키로 저장하므로
+     여러 기기가 동시에 같은 이벤트를 기록해도 중복되지 않음 */
+  function writeLog(type, p, u, extra) {
+    var t = now();
+    var id = u.start + '_' + p + '_' + type + (type === 'extend' ? '_' + t : '');
+    var data = Object.assign({
+      type: type,
+      profile: p,
+      ott: getProfileOtt(p),
+      user: u.user || '',
+      deviceId: u.deviceId || '',
+      start: u.start,
+      end: u.end,
+      at: t
+    }, extra || {});
+    return set(ref(db, 'usage_logs/' + id), data).catch(function (err) {
+      console.error('로그 저장 실패:', err);
+    });
+  }
+
+  /* 사용 현황이 갑자기 사라졌을 때(종료 버튼/만료 기록이 없는 경우) 감지해서 기록 */
+  function watchVanished(prev, next) {
+    Object.keys(prev).forEach(function (k) {
+      var a = prev[k];
+      var b = next[k];
+      if (!a || a.end <= now() + 2000) return;
+      if (b && b.start === a.start) return;
+      setTimeout(function () {
+        var cur = state[k];
+        if (cur && cur.start === a.start) return;
+        var base = a.start + '_' + k + '_';
+        if (logsData[base + 'end_button'] || logsData[base + 'expired']) return;
+        writeLog('vanished', k, a, { detectedAt: now(), scheduledEnd: a.end });
+      }, 8000);
+    });
+  }
+
   const stateRef = ref(db, 'ott_state');
   onValue(stateRef, (snapshot) => {
+    var prev = state;
     state = snapshot.val() || {};
+    watchVanished(prev, state);
     render();
   });
 
@@ -744,21 +882,43 @@
     complaintsData = snapshot.val() || {};
   });
 
+  let logViewOpen = false;
+  let logFilter = 'all';
+  onValue(query(ref(db, 'usage_logs'), limitToLast(500)), (snapshot) => {
+    logsData = snapshot.val() || {};
+    if (logViewOpen) renderLogList();
+  });
+
   function lastName() { try { return localStorage.getItem(NAME_KEY) || ''; } catch (e) { return ''; } }
   function saveName(n) { try { localStorage.setItem(NAME_KEY, n); } catch (e) {} }
 
   function usage(p) {
     var u = state[p];
-    if (u && u.end > Date.now()) return u;
+    if (u && u.end > now()) return u;
     return null;
   }
 
-  // 만료된 세션만 DB에서 개별 삭제 (전체 덮어쓰기 X)
+  // 만료된 세션을 트랜잭션으로 안전하게 삭제하고, 실제로 삭제한 기기가 '만료' 로그를 남김
+  var purging = {};
   function purge() {
     Object.keys(state).forEach(function (k) {
-      if (state[k].end <= Date.now()) {
-        remove(ref(db, 'ott_state/' + k));
-      }
+      var u = state[k];
+      if (!u || u.end > now()) return;
+      var token = k + '_' + u.start;
+      if (purging[token]) return;
+      purging[token] = true;
+      runTransaction(ref(db, 'ott_state/' + k), function (cur) {
+        if (cur && cur.start === u.start && cur.end <= now()) return null;
+        return undefined;
+      }).then(function (res) {
+        if (res.committed) {
+          writeLog('expired', k, u, { at: u.end, detectedAt: now() });
+        }
+      }).catch(function (err) {
+        console.error('만료 처리 실패:', err);
+      }).then(function () {
+        delete purging[token];
+      });
     });
   }
 
@@ -768,8 +928,12 @@
     var d = new Date(ms);
     return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   }
+  function formatDateTime(ms) {
+    var d = new Date(ms);
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
   function remain(ms) {
-    var m = Math.max(1, Math.ceil((ms - Date.now()) / 60000));
+    var m = Math.max(1, Math.ceil((ms - now()) / 60000));
     var h = Math.floor(m / 60), r = m % 60;
     if (h && r) return h + '시간 ' + r + '분';
     if (h) return h + '시간';
@@ -787,7 +951,7 @@
   }
 
   function paint(u, meta, bar, fill) {
-    var pct = Math.max(0, Math.min(100, ((u.end - Date.now()) / (u.end - u.start)) * 100));
+    var pct = Math.max(0, Math.min(100, ((u.end - now()) / (u.end - u.start)) * 100));
     fill.style.width = pct + '%';
     bar.className = 'bar live-bar' + (pct <= 15 ? ' low' : pct <= 40 ? ' mid' : '');
     meta.textContent = clock(u.end) + ' 종료 (' + remain(u.end) + ' 남음)';
@@ -903,9 +1067,51 @@
     });
   }
 
+  function extendUsage(p, minutes) {
+    var me = getDeviceSessionId();
+    var u = state[p];
+    if (!u) return;
+    runTransaction(ref(db, 'ott_state/' + p), function (cur) {
+      if (cur && cur.start === u.start && cur.deviceId === me && cur.end > now()) {
+        return Object.assign({}, cur, { end: cur.end + minutes * 60000 });
+      }
+      return undefined;
+    }).then(function (res) {
+      if (res.committed) {
+        writeLog('extend', p, res.snapshot.val(), { addedMin: minutes });
+      }
+      openSheet(p);
+    }).catch(function (err) {
+      alert('연장 중 오류가 발생했습니다: ' + err.message);
+    });
+  }
+
+  function endUsage(p) {
+    var u = state[p];
+    if (!u) { closeSheet(); return; }
+    var t = now();
+    // 로그를 먼저 저장한 뒤 삭제해서, 삭제가 보이는 시점에는 종료 기록이 이미 존재하도록 함
+    writeLog('end_button', p, u, {
+      at: t,
+      scheduledEnd: u.end,
+      remainingMin: Math.max(0, Math.round((u.end - t) / 60000))
+    }).then(function () {
+      return runTransaction(ref(db, 'ott_state/' + p), function (cur) {
+        if (cur && cur.start === u.start) return null;
+        return undefined;
+      });
+    }).then(function () {
+      closeSheet();
+    }).catch(function (err) {
+      alert('종료 중 오류가 발생했습니다: ' + err.message);
+    });
+  }
+
   function openSheet(p) {
     hours = null;
+    logViewOpen = false;
     var sheet = document.getElementById('sheet');
+    sheet.className = 'sheet';
     sheet.textContent = '';
     var u = usage(p);
 
@@ -930,27 +1136,16 @@
       if (isOwner) {
         var extGroup = el('div', 'extend-group');
         var ext30 = el('button', 'btn extend', '+30분 연장');
-        ext30.addEventListener('click', function () {
-          var updatedData = Object.assign({}, state[p], { end: state[p].end + 30 * 60000 });
-          set(ref(db, 'ott_state/' + p), updatedData);
-          openSheet(p);
-        });
+        ext30.addEventListener('click', function () { extendUsage(p, 30); });
 
         var ext60 = el('button', 'btn extend', '+1시간 연장');
-        ext60.addEventListener('click', function () {
-          var updatedData = Object.assign({}, state[p], { end: state[p].end + 60 * 60000 });
-          set(ref(db, 'ott_state/' + p), updatedData);
-          openSheet(p);
-        });
+        ext60.addEventListener('click', function () { extendUsage(p, 60); });
 
         extGroup.appendChild(ext30);
         extGroup.appendChild(ext60);
         
         var end = el('button', 'btn danger', '사용 종료');
-        end.addEventListener('click', function () {
-          remove(ref(db, 'ott_state/' + p));
-          closeSheet();
-        });
+        end.addEventListener('click', function () { endUsage(p); });
 
         acts.appendChild(end);
         sheet.appendChild(acts);
@@ -1001,7 +1196,8 @@
 
       function submit() {
         var name = input.value.trim();
-        if (!hours || !name) return;
+        var h = hours;
+        if (!h || !name) return;
 
         var currentDeviceId = getDeviceSessionId();
 
@@ -1016,18 +1212,31 @@
           return;
         }
 
-        var now = Date.now();
-        
-        // 특정 프로필 경로만 독립적으로 set
-        set(ref(db, 'ott_state/' + p), {
-          user: name, 
-          start: now, 
-          end: now + hours * 3600000,
+        ok.disabled = true;
+        var t = now();
+        var newData = {
+          user: name,
+          start: t,
+          end: t + h * 3600000,
           deviceId: currentDeviceId
-        });
+        };
 
-        saveName(name);
-        closeSheet();
+        // 트랜잭션: 동시에 같은 프로필을 등록해도 먼저 등록한 사람의 기록을 덮어쓰지 않음
+        runTransaction(ref(db, 'ott_state/' + p), function (cur) {
+          if (cur && cur.end > now()) return undefined;
+          return newData;
+        }).then(function (res) {
+          if (res.committed) {
+            writeLog('start', p, newData, { at: t, plannedMin: Math.round(h * 60) });
+            saveName(name);
+          } else {
+            alert('방금 다른 사용자가 먼저 이 프로필을 등록했습니다.\n다른 프로필을 선택해주세요.');
+          }
+          closeSheet();
+        }).catch(function (err) {
+          alert('등록 중 오류가 발생했습니다: ' + err.message);
+          ok.disabled = false;
+        });
       }
 
       input.addEventListener('input', check);
@@ -1041,8 +1250,10 @@
   }
 
   function closeSheet() {
+    logViewOpen = false;
     var ov = document.getElementById('overlay');
     ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true');
+    document.getElementById('sheet').classList.remove('wide');
   }
 
   /* 불편사항 접수 */
@@ -1071,7 +1282,9 @@
   document.getElementById('openAdminBtn').addEventListener('click', () => { openAdminKeySheet(); });
 
   function openAdminKeySheet() {
+    logViewOpen = false;
     var sheet = document.getElementById('sheet');
+    sheet.className = 'sheet';
     sheet.textContent = '';
 
     var title = el('h2', null, '관리자 인증');
@@ -1106,6 +1319,7 @@
 
   function openComplaintsListSheet() {
     var sheet = document.getElementById('sheet');
+    sheet.className = 'sheet';
     sheet.textContent = '';
 
     var title = el('h2', null, '접수된 불편사항');
@@ -1149,6 +1363,156 @@
     close.addEventListener('click', closeSheet);
     acts.appendChild(close);
     sheet.appendChild(acts);
+  }
+
+  /* ===== 사용 로그 열람 (PIN) ===== */
+  document.getElementById('openLogBtn').addEventListener('click', () => { openLogPinSheet(); });
+
+  function openLogPinSheet() {
+    logViewOpen = false;
+    var sheet = document.getElementById('sheet');
+    sheet.className = 'sheet';
+    sheet.textContent = '';
+
+    var title = el('h2', null, '사용 로그');
+    title.id = 'dlgTitle';
+    sheet.appendChild(title);
+    sheet.appendChild(el('p', 'hint', '핀코드를 입력하세요.'));
+
+    var input = document.createElement('input');
+    input.type = 'password';
+    input.inputMode = 'numeric';
+    input.maxLength = 8;
+    input.placeholder = '핀코드';
+    input.autocomplete = 'off';
+    sheet.appendChild(input);
+
+    function tryEnter() {
+      if (input.value === LOG_PIN) {
+        openLogSheet();
+      } else {
+        alert('핀코드가 올바르지 않습니다.');
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    var acts = el('div', 'actions');
+    var cancel = el('button', 'btn', '취소');
+    cancel.addEventListener('click', closeSheet);
+    var confirmBtn = el('button', 'btn primary', '확인');
+    confirmBtn.addEventListener('click', tryEnter);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryEnter(); });
+    acts.appendChild(cancel);
+    acts.appendChild(confirmBtn);
+    sheet.appendChild(acts);
+
+    var ov = document.getElementById('overlay');
+    ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false');
+    setTimeout(function () { input.focus(); }, 50);
+  }
+
+  const LOG_TYPES = {
+    start: '등록',
+    extend: '연장',
+    end_button: '종료 버튼',
+    expired: '시간 만료',
+    vanished: '비정상 삭제'
+  };
+
+  const LOG_FILTERS = [
+    { id: 'all', label: '전체', match: function () { return true; } },
+    { id: 'start', label: '등록', match: function (t) { return t === 'start'; } },
+    { id: 'extend', label: '연장', match: function (t) { return t === 'extend'; } },
+    { id: 'end', label: '종료', match: function (t) { return t === 'end_button' || t === 'expired'; } },
+    { id: 'vanished', label: '비정상', match: function (t) { return t === 'vanished'; } }
+  ];
+
+  function logDetail(l) {
+    switch (l.type) {
+      case 'start':
+        return formatDateTime(l.at) + ' 등록 · 종료 예정 ' + formatDateTime(l.end) + (l.plannedMin ? ' (' + l.plannedMin + '분)' : '');
+      case 'extend':
+        return '+' + (l.addedMin || '?') + '분 연장 · 새 종료 예정 ' + formatDateTime(l.end);
+      case 'end_button':
+        return '사용 종료 버튼으로 직접 종료 · 예정 종료 ' + formatDateTime(l.scheduledEnd || l.end) +
+          (l.remainingMin > 0 ? ' 보다 ' + l.remainingMin + '분 일찍 종료' : ' (예정 시각 직전 종료)');
+      case 'expired':
+        return formatDateTime(l.end) + ' 사용 시간이 끝나 자동 종료' + (l.detectedAt ? ' (처리 ' + formatDateTime(l.detectedAt) + ')' : '');
+      case 'vanished':
+        return formatDateTime(l.at) + ' 감지 · 종료 버튼/만료 기록 없이 사라짐 (예정 종료 ' + formatDateTime(l.scheduledEnd || l.end) + ') · 이전 버전 화면에서 종료했을 가능성 있음';
+      default:
+        return '';
+    }
+  }
+
+  function openLogSheet() {
+    logViewOpen = true;
+    var sheet = document.getElementById('sheet');
+    sheet.className = 'sheet wide';
+    sheet.textContent = '';
+
+    var title = el('h2', null, '사용 로그');
+    title.id = 'dlgTitle';
+    sheet.appendChild(title);
+    sheet.appendChild(el('p', 'hint', '등록 · 연장 · 종료(버튼/만료) · 비정상 삭제 기록 (최근 500건)'));
+
+    var filters = el('div', 'log-filters');
+    filters.id = 'logFilters';
+    LOG_FILTERS.forEach(function (f) {
+      var b = el('button', 'log-filter-btn', f.label);
+      b.type = 'button';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', logFilter === f.id ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        logFilter = f.id;
+        Array.prototype.forEach.call(filters.children, function (x) { x.setAttribute('aria-checked', 'false'); });
+        b.setAttribute('aria-checked', 'true');
+        renderLogList();
+      });
+      filters.appendChild(b);
+    });
+    sheet.appendChild(filters);
+
+    var list = el('div');
+    list.id = 'logList';
+    sheet.appendChild(list);
+
+    var acts = el('div', 'actions');
+    var close = el('button', 'btn', '닫기');
+    close.addEventListener('click', closeSheet);
+    acts.appendChild(close);
+    sheet.appendChild(acts);
+
+    renderLogList();
+  }
+
+  function renderLogList() {
+    var list = document.getElementById('logList');
+    if (!list) return;
+    list.textContent = '';
+
+    var f = LOG_FILTERS.find(function (x) { return x.id === logFilter; }) || LOG_FILTERS[0];
+    var rows = Object.keys(logsData).map(function (k) { return logsData[k]; })
+      .filter(function (l) { return l && f.match(l.type); })
+      .sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+
+    if (rows.length === 0) {
+      list.appendChild(el('p', 'log-empty', '기록이 없습니다.'));
+      return;
+    }
+
+    rows.forEach(function (l) {
+      var box = el('div', 'log-item');
+      var top = el('div', 'log-top');
+      top.appendChild(el('span', 'log-type t-' + l.type, LOG_TYPES[l.type] || l.type));
+      top.appendChild(el('span', 'log-who', l.profile + ' (' + (l.ott || '') + ')'));
+      top.appendChild(el('span', 'log-who', '· ' + (l.user || '-')));
+      top.appendChild(el('span', 'log-time', formatDateTime(l.at)));
+      box.appendChild(top);
+      box.appendChild(el('div', 'log-detail', logDetail(l)));
+      list.appendChild(box);
+    });
   }
 
   document.getElementById('overlay').addEventListener('click', function (e) {
