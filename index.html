@@ -480,6 +480,9 @@
   }
   .log-link:hover { background: var(--surface-sub); opacity: 1; }
 
+  .ver-info { margin-top: 6px; font-size: 0.7rem; color: var(--subtle); font-weight: 500; }
+  .ver-info.err { color: var(--busy); font-weight: 700; }
+
   /* Form Controls */
   input[type="text"], input[type="password"], textarea {
     width: 100%;
@@ -710,6 +713,7 @@
   <footer>
     Made for <span>세인영</span> by <span>배성진</span>
     <button type="button" class="log-link" id="openLogBtn">사용 로그</button>
+    <div class="ver-info" id="verInfo"></div>
   </footer>
 </main>
 
@@ -735,8 +739,28 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  const ADMIN_KEY = "1234";
-  const LOG_PIN = "1357";
+  /* ===== ✏️ 설정 모음 (수정은 여기서만 하세요) ===== */
+  const CONFIG = {
+    VERSION: 'ver 1.0.2',   // 하단에 표시되는 버전
+    ADMIN_KEY: '1234',      // 불편사항 조회 비밀키
+    LOG_PIN: '1357'         // 사용 로그 핀코드
+  };
+  /* ================================================ */
+
+  const ADMIN_KEY = CONFIG.ADMIN_KEY;
+  const LOG_PIN = CONFIG.LOG_PIN;
+  document.getElementById('verInfo').textContent = CONFIG.VERSION;
+
+  /* 저장소(localStorage)가 막힌 브라우저에서도 동작하도록 안전하게 감싸기 */
+  const memStore = {};
+  function sget(k) { try { var v = localStorage.getItem(k); return v === null ? (memStore[k] || null) : v; } catch (e) { return memStore[k] || null; } }
+  function sset(k, v) { memStore[k] = v; try { localStorage.setItem(k, v); } catch (e) {} }
+
+  /* 예상치 못한 오류가 나면 하단 버전 옆에 표시 (원인 확인용) */
+  window.addEventListener('error', function (e) {
+    var v = document.getElementById('verInfo');
+    if (v) { v.textContent = CONFIG.VERSION + ' · 오류: ' + e.message; v.className = 'ver-info err'; }
+  });
 
   /* 서버 시간 보정: 기기 시계가 틀려도 다른 사람의 사용 정보를 잘못 만료시키지 않도록 함 */
   let serverOffset = 0;
@@ -752,14 +776,14 @@
   const themeLabel = document.getElementById('themeLabel');
 
   function getPreferredTheme() {
-    const saved = localStorage.getItem(THEME_KEY);
+    const saved = sget(THEME_KEY);
     if (saved) return saved;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(THEME_KEY, theme);
+    sset(THEME_KEY, theme);
     themeLabel.textContent = theme === 'dark' ? '주간 모드' : '야간 모드';
   }
 
@@ -823,10 +847,10 @@
   let hours = null;
 
   function getDeviceSessionId() {
-    let sid = localStorage.getItem(SESSION_KEY);
+    let sid = sget(SESSION_KEY);
     if (!sid) {
       sid = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-      localStorage.setItem(SESSION_KEY, sid);
+      sset(SESSION_KEY, sid);
     }
     return sid;
   }
@@ -834,10 +858,8 @@
   /* ===== 사용 로그 =====
      usage_logs/{시작시각}_{프로필}_{종류} 형태의 고정 키로 저장하므로
      여러 기기가 동시에 같은 이벤트를 기록해도 중복되지 않음 */
-  function writeLog(type, p, u, extra) {
-    var t = now();
-    var id = u.start + '_' + p + '_' + type + (type === 'extend' ? '_' + t : '');
-    var data = Object.assign({
+  function buildLog(type, p, u, extra) {
+    return Object.assign({
       type: type,
       profile: p,
       ott: getProfileOtt(p),
@@ -845,10 +867,48 @@
       deviceId: u.deviceId || '',
       start: u.start,
       end: u.end,
-      at: t
+      at: now()
     }, extra || {});
-    return set(ref(db, 'usage_logs/' + id), data).catch(function (err) {
+  }
+
+  function writeLog(type, p, u, extra) {
+    var t = now();
+    var id = u.start + '_' + p + '_' + type + (type === 'extend' ? '_' + t : '');
+    var data = buildLog(type, p, u, extra);
+    return set(ref(db, 'usage_logs/' + id), data).then(function () {
+      var v = document.getElementById('verInfo');
+      if (v) { v.textContent = CONFIG.VERSION; v.className = 'ver-info'; }
+    }).catch(function (err) {
       console.error('로그 저장 실패:', err);
+      var v = document.getElementById('verInfo');
+      if (v) { v.textContent = CONFIG.VERSION + ' · 로그 저장 오류: ' + (err && err.code ? err.code : err.message); v.className = 'ver-info err'; }
+    });
+  }
+
+  /* 등록 기록 보정: 현재 사용 중인데 '등록' 로그가 없으면(이전 버전 화면에서 등록한 경우 등)
+     새 버전 화면이 8초 뒤 대신 기록함. 이미 기록이 있으면 덮어쓰지 않음 */
+  var logsLoaded = false;
+  var backfilling = {};
+  function backfillStarts() {
+    if (!logsLoaded) return;
+    Object.keys(state).forEach(function (k) {
+      var u = state[k];
+      if (!u || u.end <= now()) return;
+      var id = u.start + '_' + k + '_start';
+      if (logsData[id] || backfilling[id]) return;
+      backfilling[id] = true;
+      setTimeout(function () {
+        var cur = state[k];
+        if (!cur || cur.start !== u.start || logsData[id]) { delete backfilling[id]; return; }
+        var data = buildLog('start', k, cur, { at: cur.start, backfilled: true });
+        runTransaction(ref(db, 'usage_logs/' + id), function (existing) {
+          return existing === null ? data : undefined;
+        }).catch(function (err) {
+          console.error('등록 로그 보정 실패:', err);
+        }).then(function () {
+          delete backfilling[id];
+        });
+      }, 8000);
     });
   }
 
@@ -874,6 +934,7 @@
     var prev = state;
     state = snapshot.val() || {};
     watchVanished(prev, state);
+    backfillStarts();
     render();
   });
 
@@ -886,11 +947,13 @@
   let logFilter = 'all';
   onValue(query(ref(db, 'usage_logs'), limitToLast(500)), (snapshot) => {
     logsData = snapshot.val() || {};
+    logsLoaded = true;
+    backfillStarts();
     if (logViewOpen) renderLogList();
   });
 
-  function lastName() { try { return localStorage.getItem(NAME_KEY) || ''; } catch (e) { return ''; } }
-  function saveName(n) { try { localStorage.setItem(NAME_KEY, n); } catch (e) {} }
+  function lastName() { return sget(NAME_KEY) || ''; }
+  function saveName(n) { sset(NAME_KEY, n); }
 
   function usage(p) {
     var u = state[p];
@@ -1107,6 +1170,33 @@
     });
   }
 
+  /* 사용 종료 확인 화면: 실수로 종료 버튼을 누르는 것을 방지 */
+  function openEndConfirm(p) {
+    var sheet = document.getElementById('sheet');
+    sheet.className = 'sheet';
+    sheet.textContent = '';
+
+    var title = el('h2', null, '정말로 종료하시겠습니까?');
+    title.id = 'dlgTitle';
+    sheet.appendChild(title);
+    sheet.appendChild(el('p', 'hint',
+      p + ' (' + getProfileOtt(p) + ') 사용을 지금 종료합니다. 종료하면 다른 사람이 바로 사용할 수 있게 됩니다.'));
+
+    var acts = el('div', 'actions');
+    var back = el('button', 'btn', '돌아가기');
+    back.addEventListener('click', function () { openSheet(p); });
+
+    var yes = el('button', 'btn danger', '네, 종료합니다');
+    yes.addEventListener('click', function () {
+      yes.disabled = true;
+      endUsage(p);
+    });
+
+    acts.appendChild(back);
+    acts.appendChild(yes);
+    sheet.appendChild(acts);
+  }
+
   function openSheet(p) {
     hours = null;
     logViewOpen = false;
@@ -1145,7 +1235,7 @@
         extGroup.appendChild(ext60);
         
         var end = el('button', 'btn danger', '사용 종료');
-        end.addEventListener('click', function () { endUsage(p); });
+        end.addEventListener('click', function () { openEndConfirm(p); });
 
         acts.appendChild(end);
         sheet.appendChild(acts);
@@ -1431,7 +1521,8 @@
   function logDetail(l) {
     switch (l.type) {
       case 'start':
-        return formatDateTime(l.at) + ' 등록 · 종료 예정 ' + formatDateTime(l.end) + (l.plannedMin ? ' (' + l.plannedMin + '분)' : '');
+        return formatDateTime(l.at) + ' 등록 · 종료 예정 ' + formatDateTime(l.end) + (l.plannedMin ? ' (' + l.plannedMin + '분)' : '') +
+          (l.backfilled ? ' · 등록 기록이 없어 나중에 보정됨 (이전 버전 화면에서 등록했을 가능성)' : '');
       case 'extend':
         return '+' + (l.addedMin || '?') + '분 연장 · 새 종료 예정 ' + formatDateTime(l.end);
       case 'end_button':
