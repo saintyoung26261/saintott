@@ -137,7 +137,7 @@
   main {
     max-width: 680px;
     margin: 0 auto;
-    padding: 32px 20px 32px;
+    padding: 16px 20px 32px;
   }
 
   /* Header Section */
@@ -1110,13 +1110,1720 @@
 .nt-date{margin-left:auto;font-size:.74rem;color:var(--muted);font-weight:600;white-space:nowrap}
 .nt-text{margin-top:8px;font-size:.88rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap;word-break:break-word}
 .nt-body{white-space:pre-wrap;word-break:break-word}
+.dr-item[hidden] { display: none; }
+/* ===== 이스터에그 모션 ===== */
+footer.tap { animation: eggTap .18s ease; }
+@keyframes eggTap {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(.93); }
+  100% { transform: scale(1); }
+}
+
+/* 화면을 가로지르는 물결 */
+.egg-sweep {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 70vw;
+  z-index: 290;
+  pointer-events: none;
+  opacity: .55;
+  filter: blur(6px);
+  background: linear-gradient(90deg, transparent, #ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #af52de, transparent);
+  transform: translateX(-100%);
+  animation: eggSweep 1.1s cubic-bezier(.5, 0, .3, 1) forwards;
+}
+@keyframes eggSweep {
+  to { transform: translateX(170vw); }
+}
+
+/* 폭죽 입자 */
+.egg-pop {
+  position: fixed;
+  z-index: 295;
+  pointer-events: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  animation: eggPop 1.3s cubic-bezier(.15, .7, .3, 1) forwards;
+}
+@keyframes eggPop {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.4) rotate(0deg); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(var(--rot)); }
+}
+
+/* 안내 토스트 */
+.egg-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: .88rem;
+  font-weight: 700;
+  z-index: 300;
+  opacity: 0;
+  transition: all .3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.egg-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== 무지개 테마 ===== */
+:root {
+  --rb: linear-gradient(90deg, #ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #af52de, #ff3b30);
+}
+@keyframes rbFlow { to { background-position: 200% 50%; } }
+
+:root.rainbow h1 {
+  background: var(--rb);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rbFlow 4s linear infinite;
+}
+
+:root.rainbow .tab[aria-selected="true"],
+:root.rainbow .chip[aria-checked="true"],
+:root.rainbow .log-filter-btn[aria-checked="true"],
+:root.rainbow .btn.primary {
+  background: var(--rb);
+  background-size: 200% 100%;
+  animation: rbFlow 4s linear infinite;
+  color: #fff;
+  border-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+
+:root.rainbow .card {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--rb) border-box;
+  background-size: auto, 200% 100%;
+  animation: rbFlow 6s linear infinite;
+}
+
+:root.rainbow .bar > i,
+:root.rainbow .bar.mid > i,
+:root.rainbow .bar.low > i {
+  background: var(--rb);
+  background-size: 200% 100%;
+  animation: rbFlow 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.rainbow * { animation: none !important; }
+}
+/* ===== 잠금(사라짐) 모션 ===== */
+/* 반대 방향 + 색이 빠지는 물결 */
+.egg-sweep.off {
+  transform: translateX(100vw);
+  animation: eggSweepBack 1.2s cubic-bezier(.5, 0, .3, 1) forwards,
+             eggDrain 1.2s linear forwards;
+}
+@keyframes eggSweepBack {
+  to { transform: translateX(-170vw); }
+}
+@keyframes eggDrain {
+  from { filter: blur(6px) grayscale(0); }
+  to   { filter: blur(6px) grayscale(1); }
+}
+
+/* 화면 전체가 순간 흑백 */
+.egg-gray {
+  position: fixed;
+  inset: 0;
+  z-index: 288;
+  pointer-events: none;
+  -webkit-backdrop-filter: grayscale(1);
+  backdrop-filter: grayscale(1);
+  animation: eggGray .9s ease forwards;
+}
+@keyframes eggGray {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* 푸터 부르르 */
+footer.shake { animation: eggShake .5s ease; }
+@keyframes eggShake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px) rotate(-1deg); }
+  30% { transform: translateX(6px) rotate(1deg); }
+  45% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .egg-sweep, .egg-pop, .egg-gray { display: none; }
+  footer.tap, footer.shake { animation: none; }
+}
+.dr-ic.rb {
+  background: linear-gradient(135deg, #ff3b30, #ff9500, #ffcc00, #34c759, #007aff, #af52de);
+  color: #fff;
+}
+
+/* ===== 무지개 테마 v2: 빛나는 레인보우 무드 배경 + 글래스모피즘 ===== */
+:root.rainbow {
+  --rb-base: #fbf3ff;
+  --surface: rgba(255, 255, 255, .42);
+  --surface-sub: rgba(255, 255, 255, .34);
+  --line: rgba(255, 255, 255, .62);
+  --info-bg: rgba(255, 255, 255, .30);
+  --overlay: rgba(60, 30, 110, .22);
+  --shadow-sm: 0 4px 16px rgba(120, 80, 200, .10);
+  --shadow-md: 0 14px 40px rgba(120, 80, 200, .20);
+  --glass-hl: rgba(255, 255, 255, .55);
+  --glass-strong: rgba(255, 255, 255, .64);
+  --glass-blur: blur(18px) saturate(170%);
+  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, .7);
+}
+@media (prefers-color-scheme: dark) {
+  :root.rainbow:not([data-theme="light"]) {
+    --rb-base: #0b0716;
+    --surface: rgba(255, 255, 255, .08);
+    --surface-sub: rgba(255, 255, 255, .07);
+    --line: rgba(255, 255, 255, .18);
+    --info-bg: rgba(255, 255, 255, .07);
+    --overlay: rgba(5, 0, 20, .45);
+    --shadow-sm: 0 4px 16px rgba(0, 0, 0, .25);
+    --shadow-md: 0 16px 44px rgba(0, 0, 0, .5);
+    --glass-hl: rgba(255, 255, 255, .20);
+    --glass-strong: rgba(26, 20, 48, .62);
+    --glass-edge: inset 0 1px 0 rgba(255, 255, 255, .22);
+  }
+}
+:root.rainbow[data-theme="dark"] {
+  --rb-base: #0b0716;
+  --surface: rgba(255, 255, 255, .08);
+  --surface-sub: rgba(255, 255, 255, .07);
+  --line: rgba(255, 255, 255, .18);
+  --info-bg: rgba(255, 255, 255, .07);
+  --overlay: rgba(5, 0, 20, .45);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, .25);
+  --shadow-md: 0 16px 44px rgba(0, 0, 0, .5);
+  --glass-hl: rgba(255, 255, 255, .20);
+  --glass-strong: rgba(26, 20, 48, .62);
+  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+
+/* 배경: 천천히 도는 파스텔 무지개 + 떠다니는 빛 번짐 + 반짝이 */
+:root.rainbow body { background: var(--rb-base); }
+:root.rainbow body::before {
+  content: "";
+  position: fixed;
+  inset: -45%;
+  z-index: -2;
+  pointer-events: none;
+  background: conic-gradient(from 0deg at 50% 50%,
+    #ff7eb3, #ffb36b, #fff27a, #7dffb0, #6be7ff, #7a8cff, #c58bff, #ff7eb3);
+  opacity: .50;
+  filter: blur(70px);
+  will-change: transform;
+  animation: rbSpin 50s linear infinite;
+}
+:root.rainbow body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(2px 2px at 18% 28%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 72% 14%, #fff, transparent 70%),
+    radial-gradient(3px 3px at 86% 58%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 34% 76%, #fff, transparent 70%),
+    radial-gradient(3px 3px at 58% 42%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 8% 88%, #fff, transparent 70%),
+    radial-gradient(42vmax 42vmax at 14% 8%, rgba(255, 120, 200, .34), transparent 62%),
+    radial-gradient(46vmax 46vmax at 92% 24%, rgba(110, 200, 255, .34), transparent 62%),
+    radial-gradient(50vmax 50vmax at 28% 96%, rgba(255, 230, 120, .28), transparent 62%),
+    radial-gradient(42vmax 42vmax at 86% 92%, rgba(170, 130, 255, .34), transparent 62%);
+  will-change: transform, opacity;
+  animation: rbDrift 16s ease-in-out infinite alternate;
+}
+@keyframes rbSpin { to { transform: rotate(360deg); } }
+@keyframes rbDrift {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: .85; }
+  to   { transform: translate3d(-2.5%, 2%, 0) scale(1.08); opacity: 1; }
+}
+
+/* 글래스 표면 (페이지 위에 직접 놓인 요소: 블러 적용) */
+:root.rainbow .card,
+:root.rainbow .summary,
+:root.rainbow .notice,
+:root.rainbow .mine-card,
+:root.rainbow .filter-bar,
+:root.rainbow .theme-toggle-btn,
+:root.rainbow .menu-btn,
+:root.rainbow .tab:not([aria-selected="true"]) {
+  background-image: linear-gradient(135deg, var(--glass-hl), rgba(255, 255, 255, .03) 60%);
+  background-color: var(--surface);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm), var(--glass-edge);
+}
+:root.rainbow .card {
+  background-size: auto;
+  animation: none;
+}
+:root.rainbow .card:hover { box-shadow: var(--shadow-md), var(--glass-edge); }
+:root.rainbow .filter-bar { border-radius: 12px; }
+:root.rainbow .theme-toggle-btn,
+:root.rainbow .menu-btn { color: var(--ink); }
+
+/* 시트 · 드로어: 조금 더 진한 유리 */
+:root.rainbow .sheet,
+:root.rainbow .drawer {
+  background-image: linear-gradient(135deg, var(--glass-hl), rgba(255, 255, 255, .03) 55%);
+  background-color: var(--glass-strong);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md), var(--glass-edge);
+}
+/* 겹친 backdrop-filter는 동작하지 않으므로 오버레이 쪽 블러는 끔 */
+:root.rainbow .overlay,
+:root.rainbow .drawer-ov {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* 시트 · 드로어 안쪽 요소: 반투명만 */
+:root.rainbow .dr-item,
+:root.rainbow .nt-item,
+:root.rainbow .chip:not([aria-checked="true"]),
+:root.rainbow input[type="text"],
+:root.rainbow input[type="password"],
+:root.rainbow textarea {
+  background-color: var(--surface-sub);
+  border-color: var(--line);
+}
+:root.rainbow footer { border-top-color: var(--line); }
+
+@media (prefers-reduced-motion: reduce) {
+  :root.rainbow body::before,
+  :root.rainbow body::after { animation: none !important; }
+}
+/* backdrop-filter 미지원 브라우저 대비 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root.rainbow { --surface: rgba(255, 255, 255, .72); --glass-strong: rgba(255, 255, 255, .85); }
+}
+
+/* ===== 무지개 테마: 야간 모드 시인성 개선 ===== */
+@media (prefers-color-scheme: dark) {
+  :root.rainbow:not([data-theme="light"]) {
+    --surface: rgba(20, 14, 42, .58);
+    --surface-sub: rgba(255, 255, 255, .09);
+    --line: rgba(255, 255, 255, .22);
+    --info-bg: rgba(20, 14, 42, .5);
+    --glass-hl: rgba(255, 255, 255, .10);
+    --glass-strong: rgba(16, 11, 34, .84);
+    --ink: #ffffff;
+    --muted: #d3d5e2;
+    --subtle: #b4b7c9;
+  }
+  :root.rainbow:not([data-theme="light"]) body::before { opacity: .20; filter: blur(80px); }
+  :root.rainbow:not([data-theme="light"]) body::after {
+    background:
+      radial-gradient(2px 2px at 18% 28%, #fff, transparent 70%),
+      radial-gradient(2px 2px at 72% 14%, #fff, transparent 70%),
+      radial-gradient(3px 3px at 86% 58%, #fff, transparent 70%),
+      radial-gradient(2px 2px at 34% 76%, #fff, transparent 70%),
+      radial-gradient(42vmax 42vmax at 14% 8%, rgba(255, 90, 180, .20), transparent 62%),
+      radial-gradient(46vmax 46vmax at 92% 24%, rgba(80, 170, 255, .20), transparent 62%),
+      radial-gradient(50vmax 50vmax at 28% 96%, rgba(255, 200, 80, .14), transparent 62%),
+      radial-gradient(42vmax 42vmax at 86% 92%, rgba(150, 100, 255, .22), transparent 62%);
+  }
+  :root.rainbow:not([data-theme="light"]) .card,
+  :root.rainbow:not([data-theme="light"]) .summary,
+  :root.rainbow:not([data-theme="light"]) .notice,
+  :root.rainbow:not([data-theme="light"]) .mine-card,
+  :root.rainbow:not([data-theme="light"]) .sheet,
+  :root.rainbow:not([data-theme="light"]) .drawer { text-shadow: 0 1px 3px rgba(0, 0, 0, .45); }
+  :root.rainbow:not([data-theme="light"]) .tab:not([aria-selected="true"]) { color: var(--muted); }
+  
+}
+
+:root.rainbow[data-theme="dark"] {
+  --surface: rgba(20, 14, 42, .58);
+  --surface-sub: rgba(255, 255, 255, .09);
+  --line: rgba(255, 255, 255, .22);
+  --info-bg: rgba(20, 14, 42, .5);
+  --glass-hl: rgba(255, 255, 255, .10);
+  --glass-strong: rgba(16, 11, 34, .84);
+  --ink: #ffffff;
+  --muted: #d3d5e2;
+  --subtle: #b4b7c9;
+}
+:root.rainbow[data-theme="dark"] body::before { opacity: .20; filter: blur(80px); }
+:root.rainbow[data-theme="dark"] body::after {
+  background:
+    radial-gradient(2px 2px at 18% 28%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 72% 14%, #fff, transparent 70%),
+    radial-gradient(3px 3px at 86% 58%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 34% 76%, #fff, transparent 70%),
+    radial-gradient(42vmax 42vmax at 14% 8%, rgba(255, 90, 180, .20), transparent 62%),
+    radial-gradient(46vmax 46vmax at 92% 24%, rgba(80, 170, 255, .20), transparent 62%),
+    radial-gradient(50vmax 50vmax at 28% 96%, rgba(255, 200, 80, .14), transparent 62%),
+    radial-gradient(42vmax 42vmax at 86% 92%, rgba(150, 100, 255, .22), transparent 62%);
+}
+:root.rainbow[data-theme="dark"] .card,
+:root.rainbow[data-theme="dark"] .summary,
+:root.rainbow[data-theme="dark"] .notice,
+:root.rainbow[data-theme="dark"] .mine-card,
+:root.rainbow[data-theme="dark"] .sheet,
+:root.rainbow[data-theme="dark"] .drawer { text-shadow: 0 1px 3px rgba(0, 0, 0, .45); }
+:root.rainbow[data-theme="dark"] .tab:not([aria-selected="true"]) { color: var(--muted); }
+
+/* ===== 이스터에그 전환 모션 v2 ===== */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+:root.vt-back::view-transition-old(root) { z-index: 2; }
+:root.vt-back::view-transition-new(root) { z-index: 1; }
+
+.egg-glow {
+  position: fixed; inset: 0; z-index: 294; pointer-events: none;
+  animation: eggGlow .85s ease-out forwards;
+}
+@keyframes eggGlow { 0% { opacity: 0; } 18% { opacity: 1; } 100% { opacity: 0; } }
+
+.egg-ring {
+  position: fixed; z-index: 296; pointer-events: none;
+  width: 40px; height: 40px; margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(transparent, transparent) padding-box,
+    conic-gradient(#ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #af52de, #ff3b30) border-box;
+  opacity: 0;
+  animation: eggRing 1.05s cubic-bezier(.2, .7, .2, 1) forwards;
+}
+.egg-ring.back { animation-name: eggRingIn; animation-timing-function: cubic-bezier(.6, 0, .3, 1); }
+@keyframes eggRing   { 0% { transform: scale(.2); opacity: .8; } 100% { transform: scale(var(--rs, 30)); opacity: 0; } }
+@keyframes eggRingIn { 0% { transform: scale(var(--rs, 30)); opacity: 0; } 25% { opacity: .8; } 100% { transform: scale(.2); opacity: 0; } }
+
+.egg-spark {
+  position: fixed; z-index: 297; pointer-events: none;
+  border-radius: 50%;
+  margin: -2px 0 0 -2px;
+  opacity: 0;
+  animation: eggSpark 1s cubic-bezier(.2, .8, .25, 1) forwards;
+}
+@keyframes eggSpark {
+  0%   { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(.3); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .egg-glow, .egg-ring, .egg-spark { display: none; }
+}
+
+/* 전환 중 상단이 비어 보이지 않도록 스냅샷 뒤 배경 고정 */
+::view-transition { background: transparent; }
+::view-transition-group(root) { animation: none; }
+
+/* ===== 무지개 테마 전용: 카드 스포트라이트 · 사용중 펄스 · 시트 스프링 · 글래스 토스트 ===== */
+:root.rainbow { --spot-1: rgba(255, 255, 255, .85); --spot-2: rgba(190, 150, 255, .20); }
+
+/* 1) 카드 위를 따라다니는 빛 반사 */
+:root.rainbow .card:hover {
+  background-image:
+    radial-gradient(210px circle at var(--mx, 50%) var(--my, 50%), var(--spot-1), var(--spot-2) 45%, transparent 72%),
+    linear-gradient(135deg, var(--glass-hl), rgba(255, 255, 255, .03) 60%);
+  border-color: rgba(255, 255, 255, .85);
+}
+
+/* 3) 사용 중 카드 숨쉬기 */
+@keyframes rbPulse {
+  0%, 100% { box-shadow: var(--shadow-sm), var(--glass-edge), 0 0 0 0 rgba(var(--pulse), 0); }
+  50%      { box-shadow: var(--shadow-sm), var(--glass-edge), 0 0 22px 2px rgba(var(--pulse), .40); }
+}
+:root.rainbow .card.busy {
+  --pulse: 244, 63, 94;
+  border-color: rgba(244, 63, 94, .38);
+  animation: rbPulse 3.8s ease-in-out infinite;
+}
+:root.rainbow .card.busy:hover { border-color: rgba(244, 63, 94, .6); }
+:root.rainbow .mine-card.show {
+  --pulse: 59, 130, 246;
+  border-color: rgba(var(--pulse), .45);
+  animation: rbPulse 3.8s ease-in-out infinite;
+}
+
+/* 드로어 스프링 */
+:root.rainbow .drawer { transition: transform .6s cubic-bezier(.34, 1.28, .64, 1); }
+
+/* 글래스 토스트 */
+:root.rainbow .egg-toast {
+  color: var(--ink);
+  background:
+    linear-gradient(90deg, #ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #af52de) bottom / 100% 2px no-repeat,
+    linear-gradient(135deg, var(--glass-hl), rgba(255, 255, 255, .03)),
+    var(--glass-strong);
+  border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-md), var(--glass-edge);
+  text-shadow: none;
+  transition: opacity .3s ease, transform .5s cubic-bezier(.34, 1.4, .64, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root.rainbow:not([data-theme="light"]) { --spot-1: rgba(255, 255, 255, .22); --spot-2: rgba(150, 120, 255, .20); }
+  
+}
+
+:root.rainbow[data-theme="dark"] { --spot-1: rgba(255, 255, 255, .22); --spot-2: rgba(150, 120, 255, .20); }
+
+/* ===== 무지개 테마 전용: 버튼 리플 · 검색창 글로우 · 로딩 스켈레톤 ===== */
+:root.rainbow { --rp-0: rgba(255, 255, 255, .75); --rp-1: rgba(160, 110, 255, .40); --rp-2: rgba(255, 150, 210, .24); --sk-a: rgba(255, 255, 255, .14); --sk-b: rgba(255, 255, 255, .62); }
+
+/* 버튼 리플 */
+:root.rainbow :is(.btn, .tab, .chip, .filter-btn, .log-filter-btn, .theme-toggle-btn, .menu-btn, .dr-item) {
+  position: relative;
+  overflow: hidden;
+}
+.rb-ripple {
+  position: absolute;
+  width: 20px; height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--rp-0) 0%, var(--rp-1) 38%, var(--rp-2) 62%, transparent 74%);
+  transform: scale(0);
+  animation: rbRipple .7s cubic-bezier(.2, .7, .3, 1) forwards;
+}
+@keyframes rbRipple {
+  0%   { transform: scale(0); opacity: .95; }
+  100% { transform: scale(var(--rs, 8)); opacity: 0; }
+}
+
+/* 검색창 포커스 글로우 */
+@property --rbAng { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes rbAngle { to { --rbAng: 360deg; } }
+:root.rainbow .search-box { isolation: isolate; }
+:root.rainbow .search-box::before,
+:root.rainbow .search-box::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius-sm) + 2px);
+  background: conic-gradient(from var(--rbAng), #ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #af52de, #ff3b30);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  animation: rbAngle 3.2s linear infinite;
+}
+:root.rainbow .search-box::before {      /* 선명한 링 */
+  z-index: 2;
+  padding: 2px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+:root.rainbow .search-box::after {       /* 번지는 빛 */
+  z-index: -1;
+  inset: -3px;
+  filter: blur(12px);
+}
+:root.rainbow .search-box:focus-within::before { opacity: 1; }
+:root.rainbow .search-box:focus-within::after  { opacity: .5; }
+:root.rainbow .search-box input:focus {
+  border-color: transparent;
+  background-color: var(--glass-strong);
+}
+
+/* 로딩 스켈레톤 */
+:root.rainbow .card.sk { pointer-events: none; cursor: default; min-height: 128px; }
+:root.rainbow .card.sk .sk-line {
+  display: block;
+  height: 12px;
+  border-radius: 7px;
+  background: linear-gradient(100deg, var(--sk-a) 25%, var(--sk-b) 50%, var(--sk-a) 75%);
+  background-size: 220% 100%;
+  animation: rbShimmer 1.5s linear infinite;
+}
+:root.rainbow .card.sk .sk-line.pill { width: 38%; height: 18px; border-radius: 999px; }
+:root.rainbow .card.sk .sk-line.name { width: 62%; height: 18px; margin-top: 4px; }
+:root.rainbow .card.sk .sk-line.badge { width: 46%; height: 20px; border-radius: 999px; }
+:root.rainbow .card.sk .sk-line.bar { width: 100%; height: 8px; margin-top: auto; }
+@keyframes rbShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+@media (prefers-color-scheme: dark) {
+  :root.rainbow:not([data-theme="light"]) { --rp-0: rgba(255, 255, 255, .32); --rp-1: rgba(150, 110, 255, .38); --rp-2: rgba(255, 120, 200, .22); --sk-a: rgba(255, 255, 255, .07); --sk-b: rgba(255, 255, 255, .26); }
+  
+}
+
+:root.rainbow[data-theme="dark"] { --rp-0: rgba(255, 255, 255, .32); --rp-1: rgba(150, 110, 255, .38); --rp-2: rgba(255, 120, 200, .22); --sk-a: rgba(255, 255, 255, .07); --sk-b: rgba(255, 255, 255, .26); }
+
+/* ===== 시트 안 확인 버튼 · 선택 칩: 배경 무지개와 같은 밝은 파스텔 톤 ===== */
+:root.rainbow .sheet .btn.primary,
+:root.rainbow .sheet .chip[aria-checked="true"],
+:root.rainbow .sheet .log-filter-btn[aria-checked="true"] {
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  color: #1b1230;
+  text-shadow: none;
+  font-weight: 700;
+  border-color: rgba(255, 255, 255, .7);
+  box-shadow: 0 4px 18px rgba(200, 140, 255, .45), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+/* ===== 무지개 테마: 내 사용 진행바 — 파스텔 무지개가 점점 채워짐 ===== */
+.zbar-fill { display: none; }
+:root.rainbow .zbar {
+  background: var(--surface-sub);
+  box-shadow: inset 0 1px 3px rgba(60, 30, 110, .18);
+  height: 10px;
+}
+:root.rainbow .zbar-cover { display: none; }
+:root.rainbow .zbar-fill {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #cf9aff, #8a9cff, #74e8ff, #8affb8, #ffe874, #ffb877, #ff8fb8);
+  clip-path: inset(0 100% 0 0 round 999px);
+  transition: clip-path 1s linear;
+}
+
+/* ===== 종료 확인 시트의 '네, 종료합니다' 버튼도 파스텔 무지개 ===== */
+:root.rainbow .sheet .btn.danger {
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  animation: rbFlow 4s linear infinite;
+  color: #1b1230;
+  text-shadow: none;
+  font-weight: 700;
+  border-color: rgba(255, 255, 255, .7);
+  box-shadow: 0 4px 18px rgba(200, 140, 255, .45), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+/* ===== 제목 · 선택된 탭: 파스텔 무지개 톤 ===== */
+:root.rainbow h1 {
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(90, 50, 150, .35));
+}
+:root.rainbow .tab[aria-selected="true"] {
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  color: #1b1230;
+  text-shadow: none;
+  border-color: rgba(255, 255, 255, .7);
+  box-shadow: 0 4px 16px rgba(200, 140, 255, .40), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+/* ===== 전체 / 사용 가능 / 사용 중 필터: 선택된 버튼 파스텔 무지개 ===== */
+:root.rainbow .filter-bar .filter-btn[aria-checked="true"] {
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  animation: rbFlow 4s linear infinite;
+  color: #1b1230;
+  font-weight: 700;
+  text-shadow: none;
+  box-shadow: 0 3px 12px rgba(200, 140, 255, .40), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+/* ===== 무지개 테마: 메뉴/시트 열면 뒤 화면 블러 + 시간 선택 창 유리 효과 ===== */
+/* 오버레이 자체에 backdrop-filter를 걸면 안쪽 시트의 유리 블러가 죽으므로, 블러는 별도 레이어(::before)로 분리 */
+:root.rainbow .overlay::before,
+:root.rainbow .drawer-ov::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+:root.rainbow .sheet { position: relative; z-index: 1; }
+:root.rainbow .drawer { z-index: 1; }
+
+/* 시트(시간 선택 창 포함): 더 투명한 유리 + 밝은 테두리 */
+:root.rainbow {
+  --sheet-bg: rgba(255, 255, 255, .34);
+  --sheet-hl: rgba(255, 255, 255, .62);
+  --sheet-line: rgba(255, 255, 255, .78);
+  --sheet-inner: rgba(255, 255, 255, .30);
+  --sheet-inner-line: rgba(255, 255, 255, .62);
+}
+@media (prefers-color-scheme: dark) {
+  :root.rainbow:not([data-theme="light"]) {
+    --sheet-bg: rgba(24, 18, 50, .46);
+    --sheet-hl: rgba(255, 255, 255, .20);
+    --sheet-line: rgba(255, 255, 255, .30);
+    --sheet-inner: rgba(255, 255, 255, .10);
+    --sheet-inner-line: rgba(255, 255, 255, .24);
+  }
+}
+:root.rainbow[data-theme="dark"] {
+  --sheet-bg: rgba(24, 18, 50, .46);
+  --sheet-hl: rgba(255, 255, 255, .20);
+  --sheet-line: rgba(255, 255, 255, .30);
+  --sheet-inner: rgba(255, 255, 255, .10);
+  --sheet-inner-line: rgba(255, 255, 255, .24);
+}
+:root.rainbow .sheet {
+  background-image:
+    linear-gradient(135deg, var(--sheet-hl), rgba(255, 255, 255, .04) 48%, rgba(255, 255, 255, .0) 70%),
+    radial-gradient(120% 60% at 0% 0%, rgba(255, 255, 255, .28), transparent 60%);
+  background-color: var(--sheet-bg);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--sheet-line);
+  box-shadow:
+    0 20px 60px rgba(100, 60, 190, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .8),
+    inset 0 -1px 0 rgba(255, 255, 255, .18);
+}
+/* 시트 안쪽 칩 · 입력창 · 취소 버튼: 얇은 유리 조각처럼 */
+:root.rainbow .sheet .chip:not([aria-checked="true"]),
+:root.rainbow .sheet input[type="text"],
+:root.rainbow .sheet input[type="password"],
+:root.rainbow .sheet textarea,
+:root.rainbow .sheet .btn:not(.primary):not(.danger):not(.extend) {
+  background-color: var(--sheet-inner);
+  border: 1px solid var(--sheet-inner-line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45);
+}
+
+/* ===== 무지개 테마: 상단 필터(전체/사용 가능/사용 중) 물방울 슬라이드 ===== */
+.rb-drop { display: none; }
+:root.rainbow #filterBar { position: relative; }
+:root.rainbow #filterBar.rb-drop-on .rb-drop {
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  animation: rbFlow 4s linear infinite;
+  box-shadow:
+    0 4px 16px rgba(200, 140, 255, .45),
+    inset 0 1px 0 rgba(255, 255, 255, .85),
+    inset 0 -3px 6px rgba(255, 255, 255, .25);
+  will-change: transform, width;
+}
+:root.rainbow #filterBar.rb-drop-on .rb-drop::after {   /* 물방울 하이라이트 */
+  content: "";
+  position: absolute;
+  left: 14%; right: 14%; top: 2px; height: 38%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .75), rgba(255, 255, 255, 0));
+}
+:root.rainbow #filterBar.rb-drop-on .filter-btn { position: relative; z-index: 1; }
+:root.rainbow #filterBar.rb-drop-on .filter-btn[aria-checked="true"] {
+  background: transparent;
+  animation: none;
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.rainbow #filterBar.rb-drop-on .rb-drop { animation: none; }
+}
+
+/* ===== 제목 5연타용: 눌리는 느낌/선택/하이라이트 없음 ===== */
+h1 {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: default;
+}
+
+/* ===== 모노 글래스 테마: 무지개 테마와 같은 디자인에서 무지개 색만 뺀 버전 (class: rainbow + mono) ===== */
+.egg-ring.mono {
+  background:
+    linear-gradient(transparent, transparent) padding-box,
+    conic-gradient(#ffffff, #98a1bb, #ffffff, #98a1bb, #ffffff) border-box;
+}
+
+:root.rainbow.mono {
+  --rb-base: #f2f3f7;
+  --overlay: rgba(25, 30, 48, .22);
+  --shadow-sm: 0 4px 16px rgba(40, 50, 80, .10);
+  --shadow-md: 0 14px 40px rgba(40, 50, 80, .20);
+  --spot-2: rgba(150, 160, 190, .20);
+  --rp-1: rgba(110, 120, 150, .34);
+  --rp-2: rgba(170, 180, 200, .22);
+  --mn-bg: linear-gradient(135deg, rgba(255, 255, 255, .88), rgba(255, 255, 255, .42));
+  --mn-ink: #1b2236;
+  --mn-edge: rgba(255, 255, 255, .95);
+  --mn-shadow: 0 4px 14px rgba(40, 50, 80, .20), inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 0 rgba(255, 255, 255, .45);
+  --mn-ring: #6b748c, #ffffff, #b6bdd0, #6b748c;
+  --mn-line: rgba(90, 100, 130, .6);
+  --mn-sheet-shadow: 0 20px 60px rgba(30, 40, 70, .28);
+  --mn-c1: #ffffff; --mn-c2: #cfd5e4; --mn-c3: #f4f5f9; --mn-c4: #aab3c8;
+  --mn-g1: rgba(255, 255, 255, .55); --mn-g2: rgba(200, 210, 235, .40);
+  --mn-g3: rgba(255, 255, 255, .45); --mn-g4: rgba(180, 190, 215, .38);
+}
+@media (prefers-color-scheme: dark) {
+  :root.rainbow.mono:not([data-theme="light"]) {
+    --rb-base: #0a0b10;
+    --overlay: rgba(0, 0, 8, .45);
+    --surface: rgba(20, 22, 32, .58);
+    --info-bg: rgba(20, 22, 32, .5);
+    --glass-strong: rgba(14, 16, 24, .84);
+    --sheet-bg: rgba(22, 24, 34, .46);
+    --spot-2: rgba(170, 180, 210, .18);
+    --rp-1: rgba(200, 210, 240, .30);
+    --rp-2: rgba(160, 170, 200, .20);
+    --mn-bg: linear-gradient(135deg, rgba(255, 255, 255, .30), rgba(255, 255, 255, .10));
+    --mn-ink: #ffffff;
+    --mn-edge: rgba(255, 255, 255, .45);
+    --mn-shadow: 0 4px 16px rgba(0, 0, 0, .40), inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(255, 255, 255, .12);
+    --mn-ring: #e6eaf7, #6b7390, #b4bbd2, #e6eaf7;
+    --mn-line: rgba(255, 255, 255, .55);
+    --mn-sheet-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+    --mn-c1: #5b6380; --mn-c2: #2a2f45; --mn-c3: #7b84a3; --mn-c4: #1c2030;
+    --mn-g1: rgba(120, 130, 170, .16); --mn-g2: rgba(90, 110, 160, .16);
+    --mn-g3: rgba(110, 120, 150, .12); --mn-g4: rgba(130, 140, 190, .18);
+  }
+}
+:root.rainbow.mono[data-theme="dark"] {
+  --rb-base: #0a0b10;
+  --overlay: rgba(0, 0, 8, .45);
+  --surface: rgba(20, 22, 32, .58);
+  --info-bg: rgba(20, 22, 32, .5);
+  --glass-strong: rgba(14, 16, 24, .84);
+  --sheet-bg: rgba(22, 24, 34, .46);
+  --spot-2: rgba(170, 180, 210, .18);
+  --rp-1: rgba(200, 210, 240, .30);
+  --rp-2: rgba(160, 170, 200, .20);
+  --mn-bg: linear-gradient(135deg, rgba(255, 255, 255, .30), rgba(255, 255, 255, .10));
+  --mn-ink: #ffffff;
+  --mn-edge: rgba(255, 255, 255, .45);
+  --mn-shadow: 0 4px 16px rgba(0, 0, 0, .40), inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(255, 255, 255, .12);
+  --mn-ring: #e6eaf7, #6b7390, #b4bbd2, #e6eaf7;
+  --mn-line: rgba(255, 255, 255, .55);
+  --mn-sheet-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+  --mn-c1: #5b6380; --mn-c2: #2a2f45; --mn-c3: #7b84a3; --mn-c4: #1c2030;
+  --mn-g1: rgba(120, 130, 170, .16); --mn-g2: rgba(90, 110, 160, .16);
+  --mn-g3: rgba(110, 120, 150, .12); --mn-g4: rgba(130, 140, 190, .18);
+}
+
+/* 배경: 무지개 → 은은한 회색빛 */
+:root.rainbow.mono body::before {
+  background: conic-gradient(from 0deg at 50% 50%, var(--mn-c1), var(--mn-c2), var(--mn-c3), var(--mn-c4), var(--mn-c1));
+}
+:root.rainbow.mono body::after {
+  background:
+    radial-gradient(2px 2px at 18% 28%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 72% 14%, #fff, transparent 70%),
+    radial-gradient(3px 3px at 86% 58%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 34% 76%, #fff, transparent 70%),
+    radial-gradient(3px 3px at 58% 42%, #fff, transparent 70%),
+    radial-gradient(2px 2px at 8% 88%, #fff, transparent 70%),
+    radial-gradient(42vmax 42vmax at 14% 8%, var(--mn-g1), transparent 62%),
+    radial-gradient(46vmax 46vmax at 92% 24%, var(--mn-g2), transparent 62%),
+    radial-gradient(50vmax 50vmax at 28% 96%, var(--mn-g3), transparent 62%),
+    radial-gradient(42vmax 42vmax at 86% 92%, var(--mn-g4), transparent 62%);
+  /* 유리 아래 빛이 천천히 굴절되는 듯, 배경 하이라이트만 부드럽게 이동 */
+  animation: glassRefractionDrift 24s ease-in-out infinite alternate;
+}
+@keyframes glassRefractionDrift {
+  from { transform: translate3d(1.5%, -1%, 0) scale(1); opacity: .78; }
+  to   { transform: translate3d(-1.5%, 1.2%, 0) scale(1.04); opacity: 1; }
+}
+
+/* 제목 */
+:root.rainbow.mono h1 {
+  background: none !important;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--mn-ink) !important;
+  animation: none;
+  filter: none;
+}
+
+/* 선택된 탭 · 칩 · 필터 · 확인 버튼: 무지개 → 모노 (라이트: 짙은 그래파이트 / 다크: 은백색) */
+:root.rainbow.mono .tab[aria-selected="true"],
+:root.rainbow.mono .chip[aria-checked="true"],
+:root.rainbow.mono .log-filter-btn[aria-checked="true"],
+:root.rainbow.mono .btn.primary,
+:root.rainbow.mono .filter-bar .filter-btn[aria-checked="true"],
+:root.rainbow.mono .sheet .btn.primary,
+:root.rainbow.mono .sheet .chip[aria-checked="true"],
+:root.rainbow.mono .sheet .log-filter-btn[aria-checked="true"] {
+  background: var(--mn-bg);
+  background-size: auto;
+  animation: none;
+  color: var(--mn-ink);
+  text-shadow: none;
+  font-weight: 700;
+  border-color: var(--mn-edge);
+  box-shadow: var(--mn-shadow);
+  -webkit-backdrop-filter: blur(12px) saturate(170%);
+  backdrop-filter: blur(12px) saturate(170%);
+}
+/* 종료 확인 버튼: 원래의 빨간 위험 버튼 */
+:root.rainbow.mono .sheet .btn.danger {
+  background: var(--busy-bg);
+  background-size: auto;
+  animation: none;
+  color: var(--busy);
+  text-shadow: none;
+  font-weight: 600;
+  border-color: transparent;
+  box-shadow: none;
+}
+/* 필터 물방울 */
+:root.rainbow.mono #filterBar.rb-drop-on .rb-drop {
+  background: var(--mn-bg);
+  background-size: auto;
+  animation: none;
+  box-shadow: var(--mn-shadow);
+}
+
+/* 카드 진행바 · 내 사용 진행바: 원래 색(초록/주황/빨강)으로 */
+:root.rainbow.mono .bar > i { background: var(--free); background-size: auto; animation: none; }
+:root.rainbow.mono .bar.mid > i { background: #f59e0b; background-size: auto; animation: none; }
+:root.rainbow.mono .bar.low > i { background: var(--busy); background-size: auto; animation: none; }
+/* 내 사용 진행바: 빈 부분은 무지개 테마와 동일(트랙 색·안쪽 그림자), 채워지는 부분만 초록→주황→빨강 */
+:root.rainbow.mono .zbar-fill {
+  background: linear-gradient(90deg, var(--free) 0 60%, var(--warn) 60% 85%, var(--busy) 85% 100%);
+  animation: none;
+}
+
+/* 검색창 포커스 링 · 시트 그림자 · 토스트 밑줄 */
+:root.rainbow.mono .search-box::before,
+:root.rainbow.mono .search-box::after {
+  background: conic-gradient(from var(--rbAng), var(--mn-ring));
+}
+:root.rainbow.mono .sheet {
+  box-shadow: var(--mn-sheet-shadow), inset 0 1px 0 rgba(255, 255, 255, .8), inset 0 -1px 0 rgba(255, 255, 255, .18);
+}
+:root.rainbow.mono .sheet {
+  background-size: 220% 220%, 180% 180%;
+  animation: glassSheetShine 20s ease-in-out infinite alternate;
+}
+@keyframes glassSheetShine {
+  from { background-position: 0% 0%, 0% 0%; }
+  to   { background-position: 100% 100%, 35% 70%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.rainbow.mono .sheet { animation: none; }
+}
+:root.rainbow.mono .egg-toast {
+  background:
+    linear-gradient(90deg, transparent, var(--mn-line), transparent) bottom / 100% 2px no-repeat,
+    linear-gradient(135deg, var(--glass-hl), rgba(255, 255, 255, .03)),
+    var(--glass-strong);
+}
+.dr-ic.gl { background: linear-gradient(135deg, #ffffff, #b8c0d6); color: #27304a; }
+.dr-sec[hidden] { display: none; }
+
+/* ===== 필터 물방울 잔상 제거 (무지개/유리 공통) ===== */
+/* 버튼의 배경·그림자·블러가 서서히 사라지며 남는 잔상을 막고, 글자색만 부드럽게 전환 */
+:root.rainbow #filterBar.rb-drop-on .filter-btn { transition: color .25s ease; }
+:root.rainbow.mono #filterBar.rb-drop-on .filter-btn,
+:root.rainbow.mono #filterBar.rb-drop-on .filter-btn[aria-checked="true"] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* ===== 유리 테마: 선택된 OTT 탭이 확실히 구분되도록 ===== */
+:root.rainbow.mono {
+  --mn-tab-bg: linear-gradient(135deg, rgba(38, 46, 74, .90), rgba(38, 46, 74, .72));
+  --mn-tab-ink: #ffffff;
+  --mn-tab-edge: rgba(255, 255, 255, .55);
+  --mn-tab-shadow: 0 3px 8px rgba(38, 46, 74, .30), inset 0 1px 0 rgba(255, 255, 255, .30);
+}
+@media (prefers-color-scheme: dark) {
+  :root.rainbow.mono:not([data-theme="light"]) {
+    --mn-tab-bg: linear-gradient(135deg, rgba(255, 255, 255, .46), rgba(255, 255, 255, .24));
+    --mn-tab-ink: #ffffff;
+    --mn-tab-edge: rgba(255, 255, 255, .90);
+    --mn-tab-shadow: 0 0 0 1px rgba(255, 255, 255, .25), 0 3px 10px rgba(0, 0, 0, .40), inset 0 1px 0 rgba(255, 255, 255, .65);
+  }
+}
+:root.rainbow.mono[data-theme="dark"] {
+  --mn-tab-bg: linear-gradient(135deg, rgba(255, 255, 255, .46), rgba(255, 255, 255, .24));
+  --mn-tab-ink: #ffffff;
+  --mn-tab-edge: rgba(255, 255, 255, .90);
+  --mn-tab-shadow: 0 0 0 1px rgba(255, 255, 255, .25), 0 3px 10px rgba(0, 0, 0, .40), inset 0 1px 0 rgba(255, 255, 255, .65);
+}
+:root.rainbow.mono .tab[aria-selected="true"] {
+  background: var(--mn-tab-bg);
+  color: var(--mn-tab-ink);
+  border-color: var(--mn-tab-edge);
+  box-shadow: var(--mn-tab-shadow);
+  font-weight: 700;
+}
+
+/* 탭 줄은 가로 스크롤 영역이라 그림자가 네모로 잘려 보였음: 안쪽 여백을 늘리고 바깥 여백으로 상쇄 */
+:root.rainbow .tabs {
+  padding: 10px 8px 16px;
+  margin: -10px -8px 0;
+}
+
+/* 푸터: 눌림 느낌 없음 (탭 하이라이트 · 글자 선택 · 더블탭 확대 제거) */
+footer {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: default;
+}
+footer.tap { animation: none; }
+
+/* ===== 큰 제목이 접히는 헤더 (모든 테마 공통) ===== */
+:root { --cbar-h: calc(52px + env(safe-area-inset-top, 0px)); }
+
+/* 펼친 상태: 큰 제목(한 줄, 전체 폭) → 안내 문구 → 모드·메뉴 버튼 줄 */
+.header-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  margin-bottom: 14px;
+}
+.header-area h1 {
+  grid-column: 1; grid-row: 1;
+  font-size: clamp(1.3rem, 7.6vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  opacity: calc(1 - var(--hp, 0));
+}
+.header-area .sub {
+  grid-column: 1; grid-row: 2;
+  margin: 6px 0 0;
+  opacity: calc(1 - var(--hp, 0));
+}
+.header-area .header-btns {
+  grid-column: 1; grid-row: 3;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 12px 0 0;
+  opacity: calc(1 - var(--hp, 0) * 1.6);
+}
+
+/* 접힌 상태: 스크롤하면 위에 고정되어 나타나는 작은 제목 바 */
+.cbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  height: var(--cbar-h);
+  padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid var(--line);
+  opacity: var(--hp, 0);
+  transform: translateY(calc((1 - var(--hp, 0)) * -10px));
+  visibility: hidden;
+  pointer-events: none;
+}
+.cbar.on { visibility: visible; pointer-events: auto; }
+.cbar-in {
+  max-width: 680px;
+  height: 52px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cbar-title {
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink);
+}
+.cbar-btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cbar .menu-btn { width: 34px; height: 34px; }
+.cbar .menu-btn svg { width: 18px; height: 18px; }
+.cbar .theme-toggle-btn { padding: 6px 12px; }
+
+/* 내 사용 중 배너가 접힌 바에 가려지지 않도록 */
+.my-banner { top: calc(var(--cbar-h) + 8px); }
+
+/* 무지개 / 유리 테마 */
+:root.rainbow .cbar {
+  background: color-mix(in srgb, var(--rb-base) 55%, transparent);
+}
+:root.rainbow .cbar-title {
+  background: linear-gradient(90deg, #ff8fb8, #ffb877, #ffe874, #8affb8, #74e8ff, #8a9cff, #cf9aff, #ff8fb8);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rbFlow 4s linear infinite;
+  filter: drop-shadow(0 1px 2px rgba(90, 50, 150, .35));
+}
+:root.rainbow.mono .cbar-title {
+  background: none !important;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--mn-ink) !important;
+  animation: none;
+  filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.rainbow .cbar-title { animation: none; }
+}
+
+/* ===== 다크모드 유리 패널: 뒤의 하얀 점(별빛)이 진짜 유리처럼 비쳐 지나가도록 ===== */
+/* 블러를 약하게, 바탕색은 더 투명하게 해서 점이 뭉개지거나 가려지지 않게 함 */
+:root.rainbow { --dk-glass: rgba(20, 14, 42, .30); }
+:root.rainbow.mono { --dk-glass: rgba(20, 22, 32, .30); }
+@media (prefers-color-scheme: dark) {
+  :root.rainbow:not([data-theme="light"]) :is(.card, .summary, .notice, .mine-card, .filter-bar, .theme-toggle-btn, .menu-btn, .tab:not([aria-selected="true"])) {
+    background-color: var(--dk-glass);
+    -webkit-backdrop-filter: blur(2px) saturate(150%);
+    backdrop-filter: blur(2px) saturate(150%);
+  }
+}
+:root.rainbow[data-theme="dark"] :is(.card, .summary, .notice, .mine-card, .filter-bar, .theme-toggle-btn, .menu-btn, .tab:not([aria-selected="true"])) {
+  background-color: var(--dk-glass);
+  -webkit-backdrop-filter: blur(2px) saturate(150%);
+  backdrop-filter: blur(2px) saturate(150%);
+}
+
+/* 탭 + 필터바: 고정 없이 일반 위치 */
+.sticky-nav .filter-bar { margin-bottom: 10px; }
+
+/* ===== 유리 테마 주간 모드: 블록별 유리 느낌 강화 (뒤에 비칠 빛 + 이중 테두리 + 윗면 광택) ===== */
+:root.rainbow.mono {
+  --lg-blob: 1;
+  --lg-sheen: linear-gradient(180deg, rgba(255, 255, 255, .50), rgba(255, 255, 255, 0));
+  --lg-shadow: 0 12px 30px rgba(70, 95, 150, .16), 0 1px 3px rgba(70, 95, 150, .12), 0 0 0 1px rgba(80, 100, 150, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .95), inset 1px 0 0 rgba(255, 255, 255, .55), inset -1px 0 0 rgba(255, 255, 255, .3), inset 0 -1px 0 rgba(255, 255, 255, .4);
+}
+@media (prefers-color-scheme: dark) {
+  :root.rainbow.mono:not([data-theme="light"]) {
+    --lg-blob: 0;
+    --lg-sheen: linear-gradient(180deg, transparent, transparent);
+    --lg-shadow: var(--shadow-sm), var(--glass-edge);
+  }
+}
+:root.rainbow.mono[data-theme="dark"] {
+  --lg-blob: 0;
+  --lg-sheen: linear-gradient(180deg, transparent, transparent);
+  --lg-shadow: var(--shadow-sm), var(--glass-edge);
+}
+/* 1) 카드 뒤에 천천히 떠다니는 은은한 빛 덩어리 */
+:root.rainbow.mono::before {
+  content: "";
+  position: fixed;
+  inset: -10%;
+  z-index: -3;
+  pointer-events: none;
+  opacity: var(--lg-blob, 1);
+  background:
+    radial-gradient(34vmax 34vmax at 18% 22%, rgba(110, 140, 235, .34), transparent 65%),
+    radial-gradient(30vmax 30vmax at 82% 38%, rgba(175, 150, 235, .28), transparent 65%),
+    radial-gradient(36vmax 36vmax at 40% 88%, rgba(90, 175, 205, .28), transparent 65%);
+  animation: lgBlobs 26s ease-in-out infinite alternate;
+}
+@keyframes lgBlobs {
+  from { transform: translate3d(-3%, -2%, 0) scale(1); }
+  to   { transform: translate3d(4%, 3%, 0) scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) { :root.rainbow.mono::before { animation: none; } }
+/* 2) 이중 테두리 (바깥 얇은 선 + 안쪽 밝은 모서리) */
+:root.rainbow.mono :is(.card, .summary, .notice, .filter-bar, .theme-toggle-btn, .menu-btn, .tab:not([aria-selected="true"])) {
+  box-shadow: var(--lg-shadow);
+}
+/* 3) 윗면 반사 광택 */
+:root.rainbow.mono .card::before,
+:root.rainbow.mono .summary::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 48%;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--lg-sheen);
+}
+:root.rainbow.mono .summary { position: relative; }
+
+/* ===== 야간 모드: 우주처럼 별 가득 (무지개·유리 공통) ===== */
+@keyframes starTwinkleA { from { opacity: .55; } to { opacity: 1; } }
+@keyframes starTwinkleB { from { opacity: 1; } to { opacity: .35; } }
+@media (prefers-color-scheme: dark) {
+:root.rainbow:not([data-theme="light"])::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: auto; bottom: auto; inset: auto;
+    width: 1px; height: 1px;
+    border-radius: 50%;
+    background: transparent;
+    filter: none;
+    pointer-events: none;
+    opacity: 1;
+    z-index: -1;
+    will-change: opacity;
+    box-shadow:
+      32.4vw 15.1vh 0 0px rgba(220,210,255,0.47),
+      36.6vw 5.8vh 0 0px rgba(255,236,200,0.56),
+      43.4vw 7.0vh 0 0px rgba(255,255,255,0.73),
+      82.7vw 12.4vh 0 0px rgba(255,255,255,0.77),
+      57.7vw 39.7vh 0 0px rgba(255,255,255,0.47),
+      29.0vw 14.4vh 0 0px rgba(255,255,255,0.74),
+      10.3vw 57.1vh 0 0px rgba(255,255,255,0.64),
+      56.4vw 61.9vh 0 0.3px rgba(200,220,255,0.79),
+      77.7vw 46.6vh 0 0px rgba(200,220,255,0.63),
+      79.4vw 69.9vh 0 0px rgba(255,255,255,0.49),
+      52.5vw 87.5vh 0 0px rgba(220,210,255,0.67),
+      11.8vw 41.8vh 0 0.3px rgba(255,255,255,0.53),
+      42.2vw 96.2vh 0 0px rgba(255,255,255,0.83),
+      34.0vw 35.0vh 0 0.3px rgba(200,220,255,0.74),
+      6.9vw 9.4vh 0 0px rgba(255,255,255,0.69),
+      6.1vw 70.1vh 0 0.3px rgba(220,210,255,0.74),
+      28.5vw 38.6vh 0 0.3px rgba(220,210,255,0.62),
+      35.5vw 61.1vh 0 0px rgba(200,220,255,0.48),
+      12.9vw 24.8vh 0 0.3px rgba(200,220,255,0.91),
+      8.1vw 44.9vh 0 0px rgba(255,236,200,0.59),
+      81.9vw 86.4vh 0 0px rgba(255,255,255,0.8),
+      68.3vw 38.0vh 0 0px rgba(255,255,255,0.53),
+      15.1vw 65.9vh 0 0px rgba(255,255,255,0.69),
+      26.3vw 0.4vh 0 0px rgba(200,220,255,0.72),
+      95.3vw 69.0vh 0 0px rgba(255,236,200,0.93),
+      45.7vw 87.1vh 0 0.3px rgba(220,210,255,0.85),
+      39.8vw 39.4vh 0 0px rgba(200,220,255,0.77),
+      19.1vw 98.5vh 0 0px rgba(200,220,255,0.53),
+      60.1vw 10.2vh 0 0px rgba(255,236,200,0.53),
+      94.9vw 61.4vh 0 0.3px rgba(255,255,255,0.89),
+      14.9vw 25.2vh 0 0.3px rgba(255,255,255,0.75),
+      12.3vw 84.9vh 0 0px rgba(200,220,255,0.69),
+      8.6vw 10.2vh 0 0.3px rgba(255,255,255,0.82),
+      82.9vw 16.1vh 0 0px rgba(255,255,255,0.55),
+      14.7vw 54.3vh 0 0px rgba(255,255,255,0.83),
+      97.9vw 86.3vh 0 0px rgba(220,210,255,0.87),
+      90.8vw 35.6vh 0 0px rgba(255,255,255,0.72),
+      63.6vw 61.3vh 0 0.3px rgba(255,255,255,0.85),
+      74.0vw 22.7vh 0 0px rgba(255,236,200,0.7),
+      99.0vw 79.0vh 0 0px rgba(200,220,255,0.58),
+      44.7vw 93.7vh 0 0px rgba(255,255,255,0.93),
+      8.1vw 10.2vh 0 0px rgba(200,220,255,0.55),
+      48.3vw 98.5vh 0 0.3px rgba(255,236,200,0.87),
+      90.9vw 34.4vh 0 0px rgba(220,210,255,0.49),
+      91.0vw 78.2vh 0 0px rgba(255,255,255,0.69),
+      43.4vw 63.6vh 0 0.3px rgba(255,255,255,0.85),
+      46.3vw 74.3vh 0 0px rgba(255,255,255,0.81),
+      99.3vw 2.8vh 0 0px rgba(255,236,200,0.9),
+      61.2vw 59.6vh 0 0px rgba(200,220,255,0.78),
+      15.6vw 54.8vh 0 0px rgba(255,255,255,0.46),
+      52.7vw 93.4vh 0 0px rgba(200,220,255,0.94),
+      82.6vw 21.1vh 0 0px rgba(255,255,255,0.56),
+      76.4vw 32.6vh 0 0px rgba(255,236,200,0.66),
+      6.1vw 74.0vh 0 0.3px rgba(200,220,255,0.78),
+      82.7vw 87.8vh 0 0px rgba(255,255,255,0.72),
+      87.3vw 77.7vh 0 0px rgba(255,236,200,0.45),
+      17.2vw 47.3vh 0 0px rgba(220,210,255,0.51),
+      32.6vw 51.8vh 0 0px rgba(255,236,200,0.69),
+      88.3vw 5.7vh 0 0px rgba(255,255,255,0.59),
+      50.8vw 56.2vh 0 0px rgba(255,255,255,0.67),
+      69.3vw 45.2vh 0 0px rgba(255,236,200,0.85),
+      69.9vw 87.7vh 0 0px rgba(255,255,255,0.91),
+      84.0vw 13.7vh 0 0px rgba(255,255,255,0.65),
+      7.3vw 24.1vh 0 0px rgba(255,255,255,0.56),
+      78.4vw 89.7vh 0 0px rgba(255,255,255,0.92),
+      14.3vw 88.3vh 0 0px rgba(200,220,255,0.56),
+      39.8vw 48.7vh 0 0px rgba(220,210,255,0.87),
+      70.6vw 99.4vh 0 0px rgba(200,220,255,0.62),
+      35.7vw 9.2vh 0 0.3px rgba(255,255,255,0.46),
+      44.0vw 1.8vh 0 0px rgba(255,255,255,0.71),
+      51.2vw 6.4vh 0 0px rgba(255,255,255,0.94),
+      8.4vw 27.2vh 0 0px rgba(255,255,255,0.59),
+      82.0vw 85.0vh 0 0px rgba(220,210,255,0.86),
+      40.6vw 53.7vh 0 0px rgba(255,236,200,0.74),
+      8.9vw 5.8vh 0 0px rgba(220,210,255,0.54),
+      26.9vw 1.7vh 0 0px rgba(255,255,255,0.85),
+      60.8vw 22.2vh 0 0.3px rgba(255,255,255,0.88),
+      1.2vw 99.4vh 0 0px rgba(200,220,255,0.91),
+      62.2vw 4.3vh 0 0px rgba(220,210,255,0.57),
+      96.9vw 26.2vh 0 0px rgba(255,255,255,0.55),
+      62.9vw 53.1vh 0 0px rgba(255,255,255,0.59),
+      27.1vw 80.4vh 0 0px rgba(255,255,255,0.47),
+      73.3vw 55.1vh 0 0px rgba(255,255,255,0.71),
+      93.5vw 10.6vh 0 0.3px rgba(220,210,255,0.67),
+      54.6vw 88.9vh 0 0px rgba(255,236,200,0.6),
+      98.2vw 34.3vh 0 0px rgba(220,210,255,0.81),
+      40.5vw 34.8vh 0 0px rgba(255,255,255,0.87),
+      7.1vw 74.1vh 0 0px rgba(255,255,255,0.67),
+      8.4vw 84.1vh 0 0px rgba(255,236,200,0.79),
+      59.9vw 69.3vh 0 0px rgba(255,255,255,0.68),
+      26.9vw 0.4vh 0 0px rgba(255,255,255,0.93),
+      24.4vw 96.6vh 0 0px rgba(255,255,255,0.56),
+      0.1vw 38.2vh 0 0px rgba(200,220,255,0.59),
+      24.8vw 77.6vh 0 0px rgba(255,255,255,0.58),
+      14.4vw 58.7vh 0 0px rgba(200,220,255,0.46),
+      63.0vw 8.4vh 0 0px rgba(255,236,200,0.88),
+      65.8vw 71.6vh 0 0px rgba(255,236,200,0.64),
+      72.1vw 49.4vh 0 0px rgba(255,255,255,0.81),
+      4.4vw 83.5vh 0 0px rgba(255,236,200,0.76),
+      91.0vw 75.3vh 0 0px rgba(255,236,200,0.87),
+      82.6vw 58.4vh 0 0px rgba(220,210,255,0.79),
+      8.5vw 4.2vh 0 0px rgba(220,210,255,0.63),
+      37.7vw 45.1vh 0 0px rgba(255,255,255,0.76),
+      48.9vw 0.3vh 0 0px rgba(255,255,255,0.82),
+      65.9vw 6.6vh 0 0px rgba(220,210,255,0.69),
+      84.6vw 23.5vh 0 0.3px rgba(255,255,255,0.57),
+      49.4vw 38.3vh 0 0px rgba(200,220,255,0.91),
+      76.7vw 61.7vh 0 0px rgba(220,210,255,0.55),
+      33.2vw 65.2vh 0 0px rgba(220,210,255,0.6),
+      1.2vw 6.1vh 0 0px rgba(255,255,255,0.94),
+      69.2vw 67.6vh 0 0px rgba(255,255,255,0.8),
+      46.5vw 46.6vh 0 0px rgba(255,255,255,0.95),
+      31.2vw 8.6vh 0 0.3px rgba(200,220,255,0.46),
+      7.6vw 50.7vh 0 0.3px rgba(200,220,255,0.95),
+      21.0vw 94.6vh 0 0px rgba(255,255,255,0.49),
+      14.2vw 52.4vh 0 0px rgba(255,255,255,0.52),
+      88.7vw 70.3vh 0 0.3px rgba(255,255,255,0.7),
+      39.4vw 15.9vh 0 0.3px rgba(200,220,255,0.79),
+      30.2vw 14.1vh 0 0px rgba(255,255,255,0.64),
+      84.0vw 0.2vh 0 0px rgba(255,255,255,0.87),
+      94.0vw 19.6vh 0 0px rgba(255,255,255,0.9),
+      25.3vw 6.5vh 0 0px rgba(200,220,255,0.95),
+      36.1vw 42.8vh 0 0px rgba(255,255,255,0.88),
+      10.2vw 83.5vh 0 0px rgba(255,255,255,0.77),
+      24.9vw 26.6vh 0 0px rgba(255,236,200,0.61),
+      78.5vw 42.8vh 0 0.3px rgba(255,255,255,0.86),
+      91.3vw 94.1vh 0 0px rgba(255,236,200,0.55),
+      4.9vw 73.2vh 0 0px rgba(200,220,255,0.76),
+      64.4vw 28.6vh 0 0px rgba(255,255,255,0.91),
+      17.1vw 41.5vh 0 0px rgba(255,255,255,0.6),
+      40.6vw 23.9vh 0 0.3px rgba(200,220,255,0.73),
+      12.0vw 64.3vh 0 0.3px rgba(255,255,255,0.55),
+      55.0vw 45.3vh 0 0.3px rgba(255,255,255,0.95),
+      42.7vw 54.8vh 0 0px rgba(255,255,255,0.5),
+      55.6vw 31.9vh 0 0px rgba(255,255,255,0.58),
+      88.7vw 75.0vh 0 0px rgba(200,220,255,0.64),
+      37.7vw 33.8vh 0 0px rgba(255,255,255,0.7),
+      12.6vw 50.3vh 0 0px rgba(220,210,255,0.85),
+      9.3vw 89.7vh 0 0.3px rgba(200,220,255,0.65),
+      43.2vw 31.2vh 0 0.3px rgba(255,255,255,0.51),
+      71.0vw 89.6vh 0 0.3px rgba(200,220,255,0.93),
+      0.0vw 39.2vh 0 0.3px rgba(255,236,200,0.88),
+      24.8vw 10.9vh 0 0px rgba(255,255,255,0.53),
+      94.1vw 72.2vh 0 0.3px rgba(220,210,255,0.87),
+      8.5vw 77.7vh 0 0px rgba(255,255,255,0.84),
+      56.9vw 3.8vh 0 0px rgba(220,210,255,0.6),
+      62.6vw 52.8vh 0 0px rgba(200,220,255,0.8),
+      9.9vw 30.0vh 0 0px rgba(255,236,200,0.55),
+      22.4vw 60.1vh 0 0.3px rgba(255,255,255,0.72),
+      27.9vw 31.6vh 0 0px rgba(255,255,255,0.69),
+      54.7vw 2.9vh 0 0px rgba(200,220,255,0.8),
+      5.5vw 19.4vh 0 0px rgba(220,210,255,0.77),
+      25.7vw 66.7vh 0 0px rgba(255,255,255,0.56),
+      69.6vw 71.8vh 0 0px rgba(255,255,255,0.79),
+      0.7vw 29.2vh 0 0.3px rgba(255,236,200,0.48),
+      97.0vw 31.2vh 0 0px rgba(255,255,255,0.57),
+      26.5vw 88.9vh 0 0.3px rgba(255,255,255,0.93),
+      61.0vw 89.6vh 0 0px rgba(200,220,255,0.66),
+      94.9vw 14.6vh 0 0px rgba(200,220,255,0.48),
+      97.4vw 14.2vh 0 0px rgba(255,255,255,0.8),
+      39.3vw 89.8vh 0 0px rgba(255,255,255,0.82),
+      93.2vw 32.9vh 0 0.3px rgba(255,255,255,0.78),
+      3.2vw 66.4vh 0 0px rgba(200,220,255,0.87),
+      44.2vw 10.9vh 0 0px rgba(255,255,255,0.59),
+      42.0vw 88.5vh 0 0px rgba(255,236,200,0.93),
+      38.0vw 76.9vh 0 0.3px rgba(255,255,255,0.86),
+      8.8vw 70.5vh 0 0.3px rgba(255,255,255,0.64),
+      19.3vw 36.4vh 0 0.3px rgba(200,220,255,0.47),
+      24.8vw 62.5vh 0 0px rgba(200,220,255,0.47),
+      46.4vw 80.3vh 0 0px rgba(255,255,255,0.58);
+    animation: starTwinkleA 5.5s ease-in-out infinite alternate;
+  }
+  :root.rainbow:not([data-theme="light"])::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: auto; bottom: auto; inset: auto;
+    width: 1px; height: 1px;
+    border-radius: 50%;
+    background: transparent;
+    filter: none;
+    pointer-events: none;
+    opacity: 1;
+    z-index: -1;
+    will-change: opacity;
+    box-shadow:
+      89.9vw 33.9vh 0 1.2px rgba(255,255,255,0.8),
+      4.4vw 74.6vh 0 0.9px rgba(220,210,255,0.79),
+      29.7vw 72.2vh 0 1.2px rgba(255,236,200,0.97),
+      94.6vw 6.5vh 0 1.2px rgba(255,255,255,0.73),
+      95.7vw 95.4vh 0 0.9px rgba(200,220,255,0.94),
+      81.5vw 13.3vh 0 1.2px rgba(200,220,255,0.75),
+      30.3vw 69.2vh 0 0.9px rgba(255,255,255,0.88),
+      86.1vw 46.1vh 0 0.6px rgba(255,236,200,0.72),
+      39.2vw 16.0vh 0 0.6px rgba(200,220,255,0.72),
+      48.2vw 54.5vh 0 0.6px rgba(255,255,255,0.99),
+      98.8vw 26.5vh 0 0.9px rgba(255,255,255,0.76),
+      49.8vw 71.0vh 0 0.6px rgba(200,220,255,0.75),
+      41.7vw 62.0vh 0 1.2px rgba(220,210,255,0.77),
+      84.7vw 66.4vh 0 0.9px rgba(255,255,255,0.93),
+      29.4vw 56.7vh 0 0.9px rgba(255,255,255,0.78),
+      19.9vw 24.7vh 0 0.9px rgba(255,255,255,0.77),
+      88.4vw 57.8vh 0 0.9px rgba(255,255,255,0.72),
+      99.2vw 50.7vh 0 0.6px rgba(255,255,255,0.89),
+      65.3vw 99.1vh 0 0.6px rgba(255,255,255,0.7),
+      84.1vw 91.4vh 0 0.6px rgba(255,255,255,0.96),
+      11.9vw 19.0vh 0 0.6px rgba(255,236,200,0.76),
+      37.2vw 86.6vh 0 1.2px rgba(200,220,255,0.88),
+      94.6vw 10.6vh 0 0.9px rgba(255,236,200,0.91),
+      21.8vw 36.9vh 0 0.9px rgba(255,255,255,0.71),
+      3.8vw 73.2vh 0 0.9px rgba(255,255,255,0.94),
+      40.9vw 37.2vh 0 0.6px rgba(255,236,200,0.79),
+      3.1vw 49.6vh 0 0.6px rgba(200,220,255,0.72),
+      79.6vw 66.4vh 0 0.6px rgba(255,255,255,0.89),
+      65.3vw 39.8vh 0 0.9px rgba(255,255,255,0.82),
+      66.8vw 41.8vh 0 1.2px rgba(255,255,255,0.79),
+      88.4vw 41.4vh 0 0.9px rgba(255,255,255,0.96),
+      64.4vw 39.1vh 0 0.6px rgba(200,220,255,0.76),
+      43.4vw 15.7vh 0 0.9px rgba(255,255,255,0.95),
+      57.8vw 36.5vh 0 0.6px rgba(255,255,255,0.74),
+      55.2vw 64.1vh 0 1.2px rgba(200,220,255,0.73),
+      92.7vw 73.7vh 0 0.9px rgba(255,255,255,0.74),
+      16.2vw 17.2vh 0 0.9px rgba(255,255,255,0.73),
+      75.4vw 79.2vh 0 0.6px rgba(255,255,255,0.79),
+      97.6vw 48.3vh 0 1.2px rgba(255,255,255,0.88),
+      38.8vw 90.4vh 0 0.6px rgba(255,236,200,0.91),
+      64.0vw 85.7vh 0 0.6px rgba(255,236,200,0.82),
+      82.9vw 18.3vh 0 1.2px rgba(255,255,255,0.71),
+      15.6vw 35.9vh 0 1.2px rgba(255,255,255,0.77),
+      81.6vw 19.3vh 0 1.2px rgba(255,236,200,0.95),
+      3.8vw 83.8vh 0 0.9px rgba(255,255,255,0.82),
+      55.0vw 62.7vh 0 0.9px rgba(255,255,255,0.89),
+      58.3vw 42.6vh 0 1.2px rgba(220,210,255,0.81),
+      43.8vw 2.3vh 0 0.9px rgba(255,236,200,1.0);
+    animation: starTwinkleB 3.8s ease-in-out infinite alternate;
+  }
+  }
+:root.rainbow[data-theme="dark"]::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: auto; bottom: auto; inset: auto;
+  width: 1px; height: 1px;
+  border-radius: 50%;
+  background: transparent;
+  filter: none;
+  pointer-events: none;
+  opacity: 1;
+  z-index: -1;
+  will-change: opacity;
+  box-shadow:
+    32.4vw 15.1vh 0 0px rgba(220,210,255,0.47),
+    36.6vw 5.8vh 0 0px rgba(255,236,200,0.56),
+    43.4vw 7.0vh 0 0px rgba(255,255,255,0.73),
+    82.7vw 12.4vh 0 0px rgba(255,255,255,0.77),
+    57.7vw 39.7vh 0 0px rgba(255,255,255,0.47),
+    29.0vw 14.4vh 0 0px rgba(255,255,255,0.74),
+    10.3vw 57.1vh 0 0px rgba(255,255,255,0.64),
+    56.4vw 61.9vh 0 0.3px rgba(200,220,255,0.79),
+    77.7vw 46.6vh 0 0px rgba(200,220,255,0.63),
+    79.4vw 69.9vh 0 0px rgba(255,255,255,0.49),
+    52.5vw 87.5vh 0 0px rgba(220,210,255,0.67),
+    11.8vw 41.8vh 0 0.3px rgba(255,255,255,0.53),
+    42.2vw 96.2vh 0 0px rgba(255,255,255,0.83),
+    34.0vw 35.0vh 0 0.3px rgba(200,220,255,0.74),
+    6.9vw 9.4vh 0 0px rgba(255,255,255,0.69),
+    6.1vw 70.1vh 0 0.3px rgba(220,210,255,0.74),
+    28.5vw 38.6vh 0 0.3px rgba(220,210,255,0.62),
+    35.5vw 61.1vh 0 0px rgba(200,220,255,0.48),
+    12.9vw 24.8vh 0 0.3px rgba(200,220,255,0.91),
+    8.1vw 44.9vh 0 0px rgba(255,236,200,0.59),
+    81.9vw 86.4vh 0 0px rgba(255,255,255,0.8),
+    68.3vw 38.0vh 0 0px rgba(255,255,255,0.53),
+    15.1vw 65.9vh 0 0px rgba(255,255,255,0.69),
+    26.3vw 0.4vh 0 0px rgba(200,220,255,0.72),
+    95.3vw 69.0vh 0 0px rgba(255,236,200,0.93),
+    45.7vw 87.1vh 0 0.3px rgba(220,210,255,0.85),
+    39.8vw 39.4vh 0 0px rgba(200,220,255,0.77),
+    19.1vw 98.5vh 0 0px rgba(200,220,255,0.53),
+    60.1vw 10.2vh 0 0px rgba(255,236,200,0.53),
+    94.9vw 61.4vh 0 0.3px rgba(255,255,255,0.89),
+    14.9vw 25.2vh 0 0.3px rgba(255,255,255,0.75),
+    12.3vw 84.9vh 0 0px rgba(200,220,255,0.69),
+    8.6vw 10.2vh 0 0.3px rgba(255,255,255,0.82),
+    82.9vw 16.1vh 0 0px rgba(255,255,255,0.55),
+    14.7vw 54.3vh 0 0px rgba(255,255,255,0.83),
+    97.9vw 86.3vh 0 0px rgba(220,210,255,0.87),
+    90.8vw 35.6vh 0 0px rgba(255,255,255,0.72),
+    63.6vw 61.3vh 0 0.3px rgba(255,255,255,0.85),
+    74.0vw 22.7vh 0 0px rgba(255,236,200,0.7),
+    99.0vw 79.0vh 0 0px rgba(200,220,255,0.58),
+    44.7vw 93.7vh 0 0px rgba(255,255,255,0.93),
+    8.1vw 10.2vh 0 0px rgba(200,220,255,0.55),
+    48.3vw 98.5vh 0 0.3px rgba(255,236,200,0.87),
+    90.9vw 34.4vh 0 0px rgba(220,210,255,0.49),
+    91.0vw 78.2vh 0 0px rgba(255,255,255,0.69),
+    43.4vw 63.6vh 0 0.3px rgba(255,255,255,0.85),
+    46.3vw 74.3vh 0 0px rgba(255,255,255,0.81),
+    99.3vw 2.8vh 0 0px rgba(255,236,200,0.9),
+    61.2vw 59.6vh 0 0px rgba(200,220,255,0.78),
+    15.6vw 54.8vh 0 0px rgba(255,255,255,0.46),
+    52.7vw 93.4vh 0 0px rgba(200,220,255,0.94),
+    82.6vw 21.1vh 0 0px rgba(255,255,255,0.56),
+    76.4vw 32.6vh 0 0px rgba(255,236,200,0.66),
+    6.1vw 74.0vh 0 0.3px rgba(200,220,255,0.78),
+    82.7vw 87.8vh 0 0px rgba(255,255,255,0.72),
+    87.3vw 77.7vh 0 0px rgba(255,236,200,0.45),
+    17.2vw 47.3vh 0 0px rgba(220,210,255,0.51),
+    32.6vw 51.8vh 0 0px rgba(255,236,200,0.69),
+    88.3vw 5.7vh 0 0px rgba(255,255,255,0.59),
+    50.8vw 56.2vh 0 0px rgba(255,255,255,0.67),
+    69.3vw 45.2vh 0 0px rgba(255,236,200,0.85),
+    69.9vw 87.7vh 0 0px rgba(255,255,255,0.91),
+    84.0vw 13.7vh 0 0px rgba(255,255,255,0.65),
+    7.3vw 24.1vh 0 0px rgba(255,255,255,0.56),
+    78.4vw 89.7vh 0 0px rgba(255,255,255,0.92),
+    14.3vw 88.3vh 0 0px rgba(200,220,255,0.56),
+    39.8vw 48.7vh 0 0px rgba(220,210,255,0.87),
+    70.6vw 99.4vh 0 0px rgba(200,220,255,0.62),
+    35.7vw 9.2vh 0 0.3px rgba(255,255,255,0.46),
+    44.0vw 1.8vh 0 0px rgba(255,255,255,0.71),
+    51.2vw 6.4vh 0 0px rgba(255,255,255,0.94),
+    8.4vw 27.2vh 0 0px rgba(255,255,255,0.59),
+    82.0vw 85.0vh 0 0px rgba(220,210,255,0.86),
+    40.6vw 53.7vh 0 0px rgba(255,236,200,0.74),
+    8.9vw 5.8vh 0 0px rgba(220,210,255,0.54),
+    26.9vw 1.7vh 0 0px rgba(255,255,255,0.85),
+    60.8vw 22.2vh 0 0.3px rgba(255,255,255,0.88),
+    1.2vw 99.4vh 0 0px rgba(200,220,255,0.91),
+    62.2vw 4.3vh 0 0px rgba(220,210,255,0.57),
+    96.9vw 26.2vh 0 0px rgba(255,255,255,0.55),
+    62.9vw 53.1vh 0 0px rgba(255,255,255,0.59),
+    27.1vw 80.4vh 0 0px rgba(255,255,255,0.47),
+    73.3vw 55.1vh 0 0px rgba(255,255,255,0.71),
+    93.5vw 10.6vh 0 0.3px rgba(220,210,255,0.67),
+    54.6vw 88.9vh 0 0px rgba(255,236,200,0.6),
+    98.2vw 34.3vh 0 0px rgba(220,210,255,0.81),
+    40.5vw 34.8vh 0 0px rgba(255,255,255,0.87),
+    7.1vw 74.1vh 0 0px rgba(255,255,255,0.67),
+    8.4vw 84.1vh 0 0px rgba(255,236,200,0.79),
+    59.9vw 69.3vh 0 0px rgba(255,255,255,0.68),
+    26.9vw 0.4vh 0 0px rgba(255,255,255,0.93),
+    24.4vw 96.6vh 0 0px rgba(255,255,255,0.56),
+    0.1vw 38.2vh 0 0px rgba(200,220,255,0.59),
+    24.8vw 77.6vh 0 0px rgba(255,255,255,0.58),
+    14.4vw 58.7vh 0 0px rgba(200,220,255,0.46),
+    63.0vw 8.4vh 0 0px rgba(255,236,200,0.88),
+    65.8vw 71.6vh 0 0px rgba(255,236,200,0.64),
+    72.1vw 49.4vh 0 0px rgba(255,255,255,0.81),
+    4.4vw 83.5vh 0 0px rgba(255,236,200,0.76),
+    91.0vw 75.3vh 0 0px rgba(255,236,200,0.87),
+    82.6vw 58.4vh 0 0px rgba(220,210,255,0.79),
+    8.5vw 4.2vh 0 0px rgba(220,210,255,0.63),
+    37.7vw 45.1vh 0 0px rgba(255,255,255,0.76),
+    48.9vw 0.3vh 0 0px rgba(255,255,255,0.82),
+    65.9vw 6.6vh 0 0px rgba(220,210,255,0.69),
+    84.6vw 23.5vh 0 0.3px rgba(255,255,255,0.57),
+    49.4vw 38.3vh 0 0px rgba(200,220,255,0.91),
+    76.7vw 61.7vh 0 0px rgba(220,210,255,0.55),
+    33.2vw 65.2vh 0 0px rgba(220,210,255,0.6),
+    1.2vw 6.1vh 0 0px rgba(255,255,255,0.94),
+    69.2vw 67.6vh 0 0px rgba(255,255,255,0.8),
+    46.5vw 46.6vh 0 0px rgba(255,255,255,0.95),
+    31.2vw 8.6vh 0 0.3px rgba(200,220,255,0.46),
+    7.6vw 50.7vh 0 0.3px rgba(200,220,255,0.95),
+    21.0vw 94.6vh 0 0px rgba(255,255,255,0.49),
+    14.2vw 52.4vh 0 0px rgba(255,255,255,0.52),
+    88.7vw 70.3vh 0 0.3px rgba(255,255,255,0.7),
+    39.4vw 15.9vh 0 0.3px rgba(200,220,255,0.79),
+    30.2vw 14.1vh 0 0px rgba(255,255,255,0.64),
+    84.0vw 0.2vh 0 0px rgba(255,255,255,0.87),
+    94.0vw 19.6vh 0 0px rgba(255,255,255,0.9),
+    25.3vw 6.5vh 0 0px rgba(200,220,255,0.95),
+    36.1vw 42.8vh 0 0px rgba(255,255,255,0.88),
+    10.2vw 83.5vh 0 0px rgba(255,255,255,0.77),
+    24.9vw 26.6vh 0 0px rgba(255,236,200,0.61),
+    78.5vw 42.8vh 0 0.3px rgba(255,255,255,0.86),
+    91.3vw 94.1vh 0 0px rgba(255,236,200,0.55),
+    4.9vw 73.2vh 0 0px rgba(200,220,255,0.76),
+    64.4vw 28.6vh 0 0px rgba(255,255,255,0.91),
+    17.1vw 41.5vh 0 0px rgba(255,255,255,0.6),
+    40.6vw 23.9vh 0 0.3px rgba(200,220,255,0.73),
+    12.0vw 64.3vh 0 0.3px rgba(255,255,255,0.55),
+    55.0vw 45.3vh 0 0.3px rgba(255,255,255,0.95),
+    42.7vw 54.8vh 0 0px rgba(255,255,255,0.5),
+    55.6vw 31.9vh 0 0px rgba(255,255,255,0.58),
+    88.7vw 75.0vh 0 0px rgba(200,220,255,0.64),
+    37.7vw 33.8vh 0 0px rgba(255,255,255,0.7),
+    12.6vw 50.3vh 0 0px rgba(220,210,255,0.85),
+    9.3vw 89.7vh 0 0.3px rgba(200,220,255,0.65),
+    43.2vw 31.2vh 0 0.3px rgba(255,255,255,0.51),
+    71.0vw 89.6vh 0 0.3px rgba(200,220,255,0.93),
+    0.0vw 39.2vh 0 0.3px rgba(255,236,200,0.88),
+    24.8vw 10.9vh 0 0px rgba(255,255,255,0.53),
+    94.1vw 72.2vh 0 0.3px rgba(220,210,255,0.87),
+    8.5vw 77.7vh 0 0px rgba(255,255,255,0.84),
+    56.9vw 3.8vh 0 0px rgba(220,210,255,0.6),
+    62.6vw 52.8vh 0 0px rgba(200,220,255,0.8),
+    9.9vw 30.0vh 0 0px rgba(255,236,200,0.55),
+    22.4vw 60.1vh 0 0.3px rgba(255,255,255,0.72),
+    27.9vw 31.6vh 0 0px rgba(255,255,255,0.69),
+    54.7vw 2.9vh 0 0px rgba(200,220,255,0.8),
+    5.5vw 19.4vh 0 0px rgba(220,210,255,0.77),
+    25.7vw 66.7vh 0 0px rgba(255,255,255,0.56),
+    69.6vw 71.8vh 0 0px rgba(255,255,255,0.79),
+    0.7vw 29.2vh 0 0.3px rgba(255,236,200,0.48),
+    97.0vw 31.2vh 0 0px rgba(255,255,255,0.57),
+    26.5vw 88.9vh 0 0.3px rgba(255,255,255,0.93),
+    61.0vw 89.6vh 0 0px rgba(200,220,255,0.66),
+    94.9vw 14.6vh 0 0px rgba(200,220,255,0.48),
+    97.4vw 14.2vh 0 0px rgba(255,255,255,0.8),
+    39.3vw 89.8vh 0 0px rgba(255,255,255,0.82),
+    93.2vw 32.9vh 0 0.3px rgba(255,255,255,0.78),
+    3.2vw 66.4vh 0 0px rgba(200,220,255,0.87),
+    44.2vw 10.9vh 0 0px rgba(255,255,255,0.59),
+    42.0vw 88.5vh 0 0px rgba(255,236,200,0.93),
+    38.0vw 76.9vh 0 0.3px rgba(255,255,255,0.86),
+    8.8vw 70.5vh 0 0.3px rgba(255,255,255,0.64),
+    19.3vw 36.4vh 0 0.3px rgba(200,220,255,0.47),
+    24.8vw 62.5vh 0 0px rgba(200,220,255,0.47),
+    46.4vw 80.3vh 0 0px rgba(255,255,255,0.58);
+  animation: starTwinkleA 5.5s ease-in-out infinite alternate;
+}
+:root.rainbow[data-theme="dark"]::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: auto; bottom: auto; inset: auto;
+  width: 1px; height: 1px;
+  border-radius: 50%;
+  background: transparent;
+  filter: none;
+  pointer-events: none;
+  opacity: 1;
+  z-index: -1;
+  will-change: opacity;
+  box-shadow:
+    89.9vw 33.9vh 0 1.2px rgba(255,255,255,0.8),
+    4.4vw 74.6vh 0 0.9px rgba(220,210,255,0.79),
+    29.7vw 72.2vh 0 1.2px rgba(255,236,200,0.97),
+    94.6vw 6.5vh 0 1.2px rgba(255,255,255,0.73),
+    95.7vw 95.4vh 0 0.9px rgba(200,220,255,0.94),
+    81.5vw 13.3vh 0 1.2px rgba(200,220,255,0.75),
+    30.3vw 69.2vh 0 0.9px rgba(255,255,255,0.88),
+    86.1vw 46.1vh 0 0.6px rgba(255,236,200,0.72),
+    39.2vw 16.0vh 0 0.6px rgba(200,220,255,0.72),
+    48.2vw 54.5vh 0 0.6px rgba(255,255,255,0.99),
+    98.8vw 26.5vh 0 0.9px rgba(255,255,255,0.76),
+    49.8vw 71.0vh 0 0.6px rgba(200,220,255,0.75),
+    41.7vw 62.0vh 0 1.2px rgba(220,210,255,0.77),
+    84.7vw 66.4vh 0 0.9px rgba(255,255,255,0.93),
+    29.4vw 56.7vh 0 0.9px rgba(255,255,255,0.78),
+    19.9vw 24.7vh 0 0.9px rgba(255,255,255,0.77),
+    88.4vw 57.8vh 0 0.9px rgba(255,255,255,0.72),
+    99.2vw 50.7vh 0 0.6px rgba(255,255,255,0.89),
+    65.3vw 99.1vh 0 0.6px rgba(255,255,255,0.7),
+    84.1vw 91.4vh 0 0.6px rgba(255,255,255,0.96),
+    11.9vw 19.0vh 0 0.6px rgba(255,236,200,0.76),
+    37.2vw 86.6vh 0 1.2px rgba(200,220,255,0.88),
+    94.6vw 10.6vh 0 0.9px rgba(255,236,200,0.91),
+    21.8vw 36.9vh 0 0.9px rgba(255,255,255,0.71),
+    3.8vw 73.2vh 0 0.9px rgba(255,255,255,0.94),
+    40.9vw 37.2vh 0 0.6px rgba(255,236,200,0.79),
+    3.1vw 49.6vh 0 0.6px rgba(200,220,255,0.72),
+    79.6vw 66.4vh 0 0.6px rgba(255,255,255,0.89),
+    65.3vw 39.8vh 0 0.9px rgba(255,255,255,0.82),
+    66.8vw 41.8vh 0 1.2px rgba(255,255,255,0.79),
+    88.4vw 41.4vh 0 0.9px rgba(255,255,255,0.96),
+    64.4vw 39.1vh 0 0.6px rgba(200,220,255,0.76),
+    43.4vw 15.7vh 0 0.9px rgba(255,255,255,0.95),
+    57.8vw 36.5vh 0 0.6px rgba(255,255,255,0.74),
+    55.2vw 64.1vh 0 1.2px rgba(200,220,255,0.73),
+    92.7vw 73.7vh 0 0.9px rgba(255,255,255,0.74),
+    16.2vw 17.2vh 0 0.9px rgba(255,255,255,0.73),
+    75.4vw 79.2vh 0 0.6px rgba(255,255,255,0.79),
+    97.6vw 48.3vh 0 1.2px rgba(255,255,255,0.88),
+    38.8vw 90.4vh 0 0.6px rgba(255,236,200,0.91),
+    64.0vw 85.7vh 0 0.6px rgba(255,236,200,0.82),
+    82.9vw 18.3vh 0 1.2px rgba(255,255,255,0.71),
+    15.6vw 35.9vh 0 1.2px rgba(255,255,255,0.77),
+    81.6vw 19.3vh 0 1.2px rgba(255,236,200,0.95),
+    3.8vw 83.8vh 0 0.9px rgba(255,255,255,0.82),
+    55.0vw 62.7vh 0 0.9px rgba(255,255,255,0.89),
+    58.3vw 42.6vh 0 1.2px rgba(220,210,255,0.81),
+    43.8vw 2.3vh 0 0.9px rgba(255,236,200,1.0);
+  animation: starTwinkleB 3.8s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.rainbow::before, :root.rainbow::after { animation: none !important; }
+}
+/* 유리 테마 배경: 별똥별이 지나갈 때만 은은한 유리빛 번짐 */
+:root.rainbow .glass-meteor {
+  position: fixed;
+  z-index: -1;
+  width: clamp(110px, 28vw, 220px);
+  height: 2px;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(185, 205, 255, .10) 32%, rgba(235, 242, 255, .68) 82%, rgba(255,255,255,.95));
+  filter: blur(.45px) drop-shadow(0 0 3px rgba(175, 205, 255, .48));
+  transform-origin: 100% 50%;
+  animation: glassMeteorPass 1.7s cubic-bezier(.18,.55,.35,1) forwards;
+  will-change: transform, opacity, filter;
+}
+:root.rainbow .glass-meteor::before {
+  content: "";
+  position: absolute;
+  right: -3px; top: -2px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 0 5px 2px rgba(210,225,255,.48);
+}
+:root.rainbow .glass-meteor::after {
+  content: "";
+  position: absolute;
+  right: -17px; top: -9px;
+  width: 34px; height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(210,225,255,.24), rgba(190,210,255,.07) 48%, transparent 76%);
+  filter: blur(5px);
+}
+@keyframes glassMeteorPass {
+  0% { opacity: 0; transform: translate3d(0,0,0) rotate(var(--meteor-angle)) scaleX(.12); filter: blur(1px) drop-shadow(0 0 1px rgba(175,205,255,.2)); }
+  14% { opacity: .78; transform: translate3d(0,0,0) rotate(var(--meteor-angle)) scaleX(1); }
+  68% { opacity: .7; transform: translate3d(var(--meteor-x),var(--meteor-y),0) rotate(var(--meteor-angle)) scaleX(1); }
+  100% { opacity: 0; transform: translate3d(var(--meteor-x),var(--meteor-y),0) rotate(var(--meteor-angle)) scaleX(.12); filter: blur(.7px) drop-shadow(0 0 5px rgba(175,205,255,.5)); }
+}
+@media (prefers-reduced-motion: reduce) { .glass-meteor { display: none !important; } }
 </style>
 </head>
 <body>
+<div class="cbar" id="cbar">
+  <div class="cbar-in">
+    <span class="cbar-title">세인영 OTT 공유 현황</span>
+    <div class="cbar-btns">
+      <button type="button" class="theme-toggle-btn" aria-label="테마 변경"><span class="cbar-label">야간 모드</span></button>
+      <button type="button" class="menu-btn" aria-label="메뉴 열기"></button>
+    </div>
+  </div>
+</div>
 <main>
   <div class="notice" id="notice" hidden></div>
     <div class="header-area">
     <h1>세인영 OTT 공유 현황</h1>
+  <p class="sub">프로필을 눌러 시간과 이름을 입력한 후 사용하시기 바랍니다.</p>
     <div class="header-btns">
       <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="테마 변경">
         <span id="themeLabel">야간 모드</span>
@@ -1124,8 +2831,9 @@
       <button type="button" class="menu-btn" id="menuBtn" aria-label="메뉴 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
     </div>
   </div>
-  <p class="sub">프로필을 눌러 시간과 이름을 입력한 후 사용하시기 바랍니다.</p>
 
+  <div id="navSentinel" aria-hidden="true" style="height:1px;margin-top:-1px"></div>
+  <div class="sticky-nav" id="stickyNav">
   <!-- OTT 선택 탭 -->
   <div class="tabs" id="tabs" role="tablist" aria-label="OTT 서비스 선택"></div>
 
@@ -1134,6 +2842,7 @@
     <button type="button" class="filter-btn" data-status="all" aria-checked="true">전체</button>
     <button type="button" class="filter-btn" data-status="free" aria-checked="false">사용 가능</button>
     <button type="button" class="filter-btn" data-status="busy" aria-checked="false">사용 중</button>
+  </div>
   </div>
 
   <div class="search-wrap search-box">
@@ -1184,6 +2893,17 @@
       <span class="dr-tx"><b>관리자 문의</b></span>
       <span class="dr-arrow">↗</span>
     </button>
+    <div class="dr-sec" id="eggSec" hidden>성진의 이스터에그</div>
+    <div class="dr-item" id="rainbowItem" hidden>
+      <span class="dr-ic rb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 18a9 9 0 0 1 18 0M7 18a5 5 0 0 1 10 0"/></svg></span>
+      <span class="dr-tx"><b>무지개 테마</b><small>숨겨진 메뉴를 찾았어요</small></span>
+      <button type="button" class="switch" id="rainbowSwitch" role="switch" aria-checked="false" aria-label="무지개 테마"></button>
+    </div>
+    <div class="dr-item" id="glassItem" hidden>
+      <span class="dr-ic gl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5c3.4 4 6 7 6 10.2a6 6 0 0 1-12 0C6 10.5 8.6 7.500 12 3.5z"/></svg></span>
+      <span class="dr-tx"><b>유리 테마</b><small>숨겨진 메뉴를 찾았어요</small></span>
+      <button type="button" class="switch" id="glassSwitch" role="switch" aria-checked="false" aria-label="유리 테마"></button>
+    </div>
   </aside>
 </div>
 <div class="overlay" id="overlay" aria-hidden="true">
@@ -1192,6 +2912,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
   import { getDatabase, ref, onValue, set, push, remove, runTransaction, query, limitToLast, orderByKey, startAt, endAt, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -1208,9 +2929,13 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+  isSupported().then(function (ok) {
+  if (ok) getAnalytics(app);
+}).catch(function () {});
+
   /* ===== ✏️ 설정 모음 (수정은 여기서만 하세요) ===== */
   const CONFIG = {
-    VERSION: 'ver 1.2.0',   // 하단에 표시되는 버전
+    VERSION: 'ver 1.2.1',   // 하단에 표시되는 버전
     ADMIN_KEY: 'saintyoung26',      // 불편사항 조회 비밀키
     LOG_PIN: '1357',        // 사용 로그 핀코드
     STATS_PIN: '2468'       // 이용 현황 비밀번호
@@ -1452,8 +3177,11 @@
     });
   }
 
+  var stateLoaded = false;
+  setTimeout(function () { if (!stateLoaded) { stateLoaded = true; render(); } }, 6000);   // 연결이 늦어도 스켈레톤이 영원히 남지 않게
   const stateRef = ref(db, 'ott_state');
   onValue(stateRef, (snapshot) => {
+    stateLoaded = true;
     var prev = state;
     state = snapshot.val() || {};
     watchVanished(prev, state);
@@ -1700,6 +3428,18 @@ onValue(query(ref(db, 'announcement_logs'), limitToLast(200)), (snapshot) => {
   function render() {
     renderMyBanner();
     purge();
+    if (!stateLoaded && document.documentElement.classList.contains('rainbow')) {
+      var sg = document.getElementById('grid');
+      if (!sg.querySelector('.card.sk')) {
+        sg.textContent = '';
+        for (var i = 0; i < 6; i++) {
+          var sk = el('div', 'card sk');
+          ['pill', 'name', 'badge', 'bar'].forEach(function (c) { sk.appendChild(el('span', 'sk-line ' + c)); });
+          sg.appendChild(sk);
+        }
+      }
+      return;
+    }
     const activeGroup = OTT_GROUPS.find(g => g.id === currentCategory) || OTT_GROUPS[0];
     var q = searchQ();
     /* 검색은 프로필 이름과 서비스 이름만 대상으로 함 (사용자 이름은 검색하지 않음) */
@@ -2442,7 +4182,7 @@ function renderLogList() {
   list.textContent = '';
   if (!rows.length) list.appendChild(el('p', 'log-empty', '이 날의 기록이 없습니다.'));
   rows.forEach(function (s) { list.appendChild(sessionCard(s)); });
-  list.appendChild(el('div', 'lg-note', 'DB와 연동되어 최근 2,000건의 기록이 표시됩니다.'));
+  list.appendChild(el('div', 'lg-note', 'DB와 연동되어 최근  2 주 기록이 표시됩니다.'));
 }
 
   /* ===== 이용 현황 (비밀번호) ===== */
@@ -3227,6 +4967,8 @@ document.getElementById('openNoticeBtn').addEventListener('click', openNoticeLog
 
     
     var bar = el('div', 'zbar');
+    var fill = el('div', 'zbar-fill'); fill.id = 'mcFill';   /* 무지개 테마용 채움 바 */
+    bar.appendChild(fill);
     var cover = el('div', 'zbar-cover'); cover.id = 'mcCover';
     bar.appendChild(cover);
     box.appendChild(bar);
@@ -3263,6 +5005,7 @@ document.getElementById('openNoticeBtn').addEventListener('click', openNoticeLog
     box.classList.add('z-' + zone);
     byId('mcRemain').textContent = remain(u.end) + ' 남음';
     byId('mcCover').style.width = leftPct + '%';
+    byId('mcFill').style.clipPath = 'inset(0 ' + leftPct + '% 0 0 round 999px)';
     byId('mcProg').innerHTML = (zone === 'ok' ? '' : WARN_SVG + ' ') + '진행률 ' + Math.round(100 - leftPct) + '%';
   }
 
@@ -3323,8 +5066,308 @@ document.getElementById('drawerClose').addEventListener('click', closeDrawer);
 drawerOv.addEventListener('click', function (e) { if (e.target === drawerOv) closeDrawer(); });
 document.querySelectorAll('.dr-nav').forEach(function (b) { b.addEventListener('click', closeDrawer); });
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDrawer(); });
+/* ===== 이스터에그: 푸터 5연타 → 무지개 메뉴 해금 / 다시 5연타 → 잠금 ===== */
+(function () {
+  var RB_KEY = 'ott-board-rainbow';              // 켜짐 상태
+  var UNLOCK_KEY = 'ott-board-rainbow-unlocked'; // 메뉴 해금 여부
+  var MONO_KEY = 'ott-board-mono';               // 모노 테마 켜짐 상태 (제목 5연타)
+  var GLASS_UNLOCK_KEY = 'ott-board-glass-unlocked'; // 유리 테마 메뉴 해금 여부 (제목 5연타)
+  var root = document.documentElement;
+  var footer = document.querySelector('footer');
+  var item = document.getElementById('rainbowItem');
+  var sw = document.getElementById('rainbowSwitch');
+  var glassItem = document.getElementById('glassItem');
+  var glassSw = document.getElementById('glassSwitch');
+  var eggSec = document.getElementById('eggSec');
+  if (!footer || !item || !sw || !glassItem || !glassSw || !eggSec) return;
 
+  // '성진의 이스터에그' 소제목: 안의 메뉴가 하나라도 보일 때만 표시
+  function syncEggSec() { eggSec.hidden = item.hidden && glassItem.hidden; }
+  new MutationObserver(syncEggSec).observe(item, { attributes: true, attributeFilter: ['hidden'] });
+  new MutationObserver(syncEggSec).observe(glassItem, { attributes: true, attributeFilter: ['hidden'] });
+  function syncGlassSwitch() { glassSw.setAttribute('aria-checked', root.classList.contains('mono') ? 'true' : 'false'); }
+
+  function setRainbow(on) {
+    root.classList.remove('mono');
+    root.classList.toggle('rainbow', !!on);
+    sset(MONO_KEY, '0');
+    sset(RB_KEY, on ? '1' : '0');
+    sw.setAttribute('aria-checked', on ? 'true' : 'false');
+    syncGlassSwitch();
+  }
+  // 저장된 상태 복원
+  var unlocked = sget(UNLOCK_KEY) === '1';
+  var savedMono = sget(MONO_KEY) === '1';
+  item.hidden = !unlocked;
+  setRainbow(!savedMono && unlocked && sget(RB_KEY) === '1');
+
+  // 유리 테마는 무지개 테마와 전환되는 독립 모드
+  function applyMono(on) {
+    root.classList.toggle('mono', !!on);
+    root.classList.toggle('rainbow', !!on);
+    sw.setAttribute('aria-checked', 'false');
+    syncGlassSwitch();
+  }
+  function setMono(on) {
+    if (on) {
+      root.classList.add('rainbow', 'mono');
+      sset(MONO_KEY, '1');
+      sset(RB_KEY, '0');
+    } else {
+      root.classList.remove('mono', 'rainbow');
+      sset(MONO_KEY, '0');
+      sset(RB_KEY, '0');
+    }
+    sw.setAttribute('aria-checked', 'false');
+    syncGlassSwitch();
+  }
+  if (savedMono) {
+    sset(MONO_KEY, '1');
+    applyMono(true);
+  }
+  // 유리 테마 메뉴 복원 (이전에 켜 둔 상태였다면 해금된 것으로 간주)
+  glassItem.hidden = !(sget(GLASS_UNLOCK_KEY) === '1' || sget(MONO_KEY) === '1');
+  syncEggSec();
+  syncGlassSwitch();
+  glassSw.addEventListener('click', function () {
+    var on = glassSw.getAttribute('aria-checked') !== 'true';
+    setMono(on);
+    toast(on ? '유리 테마 ON!' : '유리 테마 OFF');
+  });
+
+  // 메뉴 안 스위치로 켜고 끄기
+  sw.addEventListener('click', function () {
+    var on = sw.getAttribute('aria-checked') !== 'true';
+    setRainbow(on);
+    toast(on ? '무지개 테마 ON!' : '무지개 테마 OFF');
+  });
+
+  /* ----- 모션 ----- */
+  function reduced() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function restart(cls) {                 // 푸터 애니메이션 재시작
+    footer.classList.remove('tap', 'shake');
+    void footer.offsetWidth;
+    footer.classList.add(cls);
+  }
+
+  /* 푸터 위치에서 원형으로 테마가 퍼지는(또는 접히는) 전환 */
+  function origin(el) {
+    var r = (el || footer).getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+  function maxRadius(o) {
+    return Math.hypot(Math.max(o.x, window.innerWidth - o.x), Math.max(o.y, window.innerHeight - o.y));
+  }
+
+  function reveal(on, apply, el) {
+    if (reduced() || !document.startViewTransition) { apply(); return; }
+    var o = origin(el), R = maxRadius(o);
+    root.classList.toggle('vt-back', !on);
+    var vt = document.startViewTransition(apply);
+    vt.ready.then(function () {
+      var c0 = 'circle(0px at ' + o.x + 'px ' + o.y + 'px)';
+      var c1 = 'circle(' + R + 'px at ' + o.x + 'px ' + o.y + 'px)';
+      root.animate(
+        { clipPath: on ? [c0, c1] : [c1, c0] },
+        { duration: 1000, easing: 'cubic-bezier(.65, 0, .2, 1)', fill: 'forwards',
+          pseudoElement: on ? '::view-transition-new(root)' : '::view-transition-old(root)' }
+      );
+    }).catch(function () {});
+    vt.finished.then(function () { root.classList.remove('vt-back'); },
+                     function () { root.classList.remove('vt-back'); });
+  }
+
+  /* 충격파 링 + 빛 번쩍임 + 반짝이 입자 */
+  function effects(on, palette, el) {
+    var o = origin(el), R = maxRadius(o);
+    var glow = document.createElement('div');
+    glow.className = 'egg-glow';
+    glow.style.background = 'radial-gradient(circle 170px at ' + o.x + 'px ' + o.y + 'px, rgba(255,255,255,.55), rgba(255,255,255,0) 100%)';
+    document.body.appendChild(glow);
+    setTimeout(function () { glow.remove(); }, 900);
+
+    for (var i = 0; i < 3; i++) {
+      (function (i) {
+        var ring = document.createElement('div');
+        ring.className = 'egg-ring' + (on ? '' : ' back') + (palette ? ' mono' : '');
+        ring.style.left = o.x + 'px';
+        ring.style.top = o.y + 'px';
+        ring.style.setProperty('--rs', (R * 2 / 40) * (1 - i * 0.12));
+        ring.style.animationDelay = (i * 110) + 'ms';
+        document.body.appendChild(ring);
+        setTimeout(function () { ring.remove(); }, 1400 + i * 110);
+      })(i);
+    }
+
+    var colors = palette || ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#00c7be', '#5ac8fa', '#af52de', '#ff6eb4'];
+    for (var k = 0; k < 40; k++) {
+      var sp = document.createElement('div');
+      sp.className = 'egg-spark';
+      var ang = Math.random() * Math.PI * 2;
+      var dist = 90 + Math.random() * Math.min(360, R * 0.55);
+      var ex = Math.cos(ang) * dist, ey = Math.sin(ang) * dist;
+      var c = colors[k % colors.length];
+      var sz = 3 + Math.random() * 5;
+      sp.style.left = o.x + 'px';
+      sp.style.top = o.y + 'px';
+      sp.style.width = sp.style.height = sz + 'px';
+      sp.style.background = c;
+      sp.style.boxShadow = '0 0 ' + (sz * 2.5) + 'px ' + c + ', 0 0 ' + (sz * 5) + 'px ' + c;
+      sp.style.setProperty('--fx', (on ? 0 : ex) + 'px');
+      sp.style.setProperty('--fy', (on ? 0 : ey) + 'px');
+      sp.style.setProperty('--tx', (on ? ex : 0) + 'px');
+      sp.style.setProperty('--ty', (on ? ey : 0) + 'px');
+      sp.style.animationDelay = (Math.random() * 180) + 'ms';
+      sp.style.animationDuration = (800 + Math.random() * 500) + 'ms';
+      document.body.appendChild(sp);
+      (function (e) { setTimeout(function () { e.remove(); }, 1700); })(sp);
+    }
+  }
+
+  function buzz(pattern) {                // 진동 (지원하는 기기만)
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  }
+  
+
+  // 이스터에그 활성화 기록을 Firebase에 날짜별로 저장
+function logEasterEgg(eventName) {
+  var userName = lastName() || '이름 미등록';
+  var now = new Date();
+
+  var dateKey =
+    now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0');
+
+  push(ref(db, 'easter_egg_activations/' + dateKey), {
+    user: userName,
+    event: eventName,
+    timestamp: Date.now()
+  }).catch(function (err) {
+    console.error('이스터에그 기록 저장 실패:', err);
+  });
+}
+  // 푸터 5연타 → 해금 / 잠금 전환
+  var taps = 0, timer = null;
+  footer.addEventListener('click', function () {
+    taps++;
+    clearTimeout(timer);
+    timer = setTimeout(function () { taps = 0; }, 2000);   // 2초 안에 이어서 눌러야 함
+    if (taps < 5) return;   // 1~4번째 탭: 눌림 효과·진동 없음
+    taps = 0;
+    clearTimeout(timer);
+
+    if (item.hidden) {
+      // 잠금 → 해금 (무지개 테마도 바로 적용)
+      logEasterEgg('rainbow_unlock');
+      reveal(true, function () {
+        item.hidden = false;
+        sset(UNLOCK_KEY, '1');
+        setRainbow(true);
+      });
+      if (!reduced()) effects(true);
+      buzz([40, 60, 40]);
+      toast('무지개 테마가 켜졌어요! 메뉴에서 끌 수 있어요');
+    } else {
+      // 해금 → 잠금 (무지개도 끄고 초기 상태로)
+      logEasterEgg('rainbow_lock');
+      reveal(false, function () {
+        setRainbow(false);
+        item.hidden = true;
+        sset(UNLOCK_KEY, '0');
+      });
+      if (!reduced()) effects(false);
+      buzz([60, 40, 60]);
+      toast('무지개 메뉴를 다시 숨겼어요');
+    }
+  });
+
+  // 제목(세인영 OTT 공유 현황) 5연타 → 유리 테마 메뉴 해금 / 다시 5연타 → 잠금
+  // 탭마다 눌림 효과·진동·애니메이션 없음. 5번째에서만 전환 모션이 나옴.
+  var title = document.querySelector('h1');
+  if (title) {
+    var tTaps = 0, tLast = 0;
+    title.addEventListener('click', function () {
+      var n = Date.now();
+      tTaps = (n - tLast <= 800) ? tTaps + 1 : 1;   // 앞 탭과 0.8초 안에 이어서 눌러야 함
+      tLast = n;
+      if (tTaps < 5) return;
+      tTaps = 0;
+
+      var unlock = glassItem.hidden;
+      logEasterEgg(unlock ? 'glass_unlock' : 'glass_lock');
+      reveal(unlock, function () {
+        if (unlock) {
+          glassItem.hidden = false;
+          sset(GLASS_UNLOCK_KEY, '1');
+          setMono(true);              // 해금과 동시에 유리 테마 적용
+        } else {
+          setMono(false);
+          glassItem.hidden = true;
+          sset(GLASS_UNLOCK_KEY, '0');
+        }
+      }, title);
+      if (!reduced()) effects(unlock, ['#ffffff', '#e6eaf7', '#c3cadf', '#98a1bb'], title);
+      buzz(unlock ? [30, 40, 30] : [40, 30, 40]);
+      toast(unlock ? '유리 테마가 켜졌어요! 메뉴에서 끌 수 있어요' : '유리 테마 메뉴를 다시 숨겼어요');
+    });
+  }
+
+  function toast(msg) {
+    var t = document.createElement('div');
+    t.className = 'egg-toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 300);
+    }, 2200);
+  }
+})();
+  /* 무지개 테마: 카드 위 포인터 위치를 따라가는 빛 반사 */
+  (function () {
+    var raf = 0, ex = 0, ey = 0, et = null;
+    function apply() {
+      raf = 0;
+      if (!et) return;
+      var card = et.closest && et.closest('.card');
+      if (!card) return;
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (ex - r.left) + 'px');
+      card.style.setProperty('--my', (ey - r.top) + 'px');
+    }
+    function onMove(e) {
+      if (!document.documentElement.classList.contains('rainbow')) return;
+      ex = e.clientX; ey = e.clientY; et = e.target;
+      if (!raf) raf = requestAnimationFrame(apply);
+    }
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerdown', onMove, { passive: true });
+  })();
+  /* 무지개 테마: 버튼 리플 */
+  (function () {
+    var SEL = '.btn,.tab,.chip,.filter-btn,.log-filter-btn,.theme-toggle-btn,.menu-btn,.dr-item,.card:not(.sk)';
+    document.addEventListener('pointerdown', function (e) {
+      if (!document.documentElement.classList.contains('rainbow')) return;
+      var t = e.target.closest && e.target.closest(SEL);
+      if (!t || t.disabled) return;
+      var r = t.getBoundingClientRect();
+      var d = Math.max(r.width, r.height);
+      var rp = document.createElement('span');
+      rp.className = 'rb-ripple';
+      rp.style.left = (e.clientX - r.left) + 'px';
+      rp.style.top = (e.clientY - r.top) + 'px';
+      rp.style.setProperty('--rs', (d * 2.6 / 20).toFixed(2));
+      t.appendChild(rp);
+      setTimeout(function () { if (rp.parentNode) rp.parentNode.removeChild(rp); }, 800);
+    }, { passive: true });
+  })();
   renderTabs();
+  render();
   recordVisit();
   document.getElementById('searchInput').addEventListener('input', render);
   setInterval(tick, 1000);
@@ -3332,5 +5375,324 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') clos
     if (!document.hidden) { purge(); recordVisit(); }
   });
 </script>
+<script>
+/* 무지개 테마 전용: 필터 선택 표시가 물방울처럼 옆으로 흘러 이동 */
+(function () {
+  var bar = document.getElementById('filterBar');
+  if (!bar) return;
+  var drop = document.createElement('span');
+  drop.className = 'rb-drop';
+  drop.setAttribute('aria-hidden', 'true');
+  bar.insertBefore(drop, bar.firstChild);
+  var root = document.documentElement;
+  var cur = null, anim = null, lastActive = null, pendingSelection = false, selectionFrame = 0;
+
+  function active() { return bar.querySelector('.filter-btn[aria-checked="true"]'); }
+  function rect(b) { return { x: b.offsetLeft, y: b.offsetTop, w: b.offsetWidth, h: b.offsetHeight }; }
+  function put(r) {
+    drop.style.width = r.w + 'px';
+    drop.style.height = r.h + 'px';
+    drop.style.top = r.y + 'px';
+    drop.style.transform = 'translateX(' + r.x + 'px)';
+  }
+  function isRainbow() { return root.classList.contains('rainbow'); }
+
+  function place(animate, fromOverride) {
+    if (!isRainbow()) { bar.classList.remove('rb-drop-on'); cur = null; lastActive = null; return; }
+    var b = active();
+    if (!b || !b.offsetWidth) return;
+    bar.classList.add('rb-drop-on');
+    var r = rect(b);
+    if (!animate || (!cur && !fromOverride) || !drop.animate) { if (anim) anim.cancel(); put(r); cur = r; lastActive = b; return; }
+    if (anim) anim.cancel();
+    var from = fromOverride || cur;
+    var left = Math.min(from.x, r.x), right = Math.max(from.x + from.w, r.x + r.w);
+    var dist = Math.abs(r.x - from.x);
+    var squash = dist > 0 ? 'scaleY(.82)' : 'scaleY(1)';
+    var top = r.y + 'px', h = r.h + 'px';
+    drop.style.top = top; drop.style.height = h;
+    var ease = 'cubic-bezier(.4, 0, .2, 1)';
+    anim = drop.animate([
+      { width: from.w + 'px', transform: 'translateX(' + from.x + 'px) scale(1, 1)', easing: ease },
+      { width: (right - left) + 'px', transform: 'translateX(' + left + 'px) ' + squash, offset: .4, easing: ease },
+      { width: r.w + 'px', transform: 'translateX(' + r.x + 'px) scale(1.06, .94)', offset: .74, easing: 'ease-out' },
+      { width: r.w + 'px', transform: 'translateX(' + r.x + 'px) scale(.98, 1.03)', offset: .88, easing: 'ease-out' },
+      { width: r.w + 'px', transform: 'translateX(' + r.x + 'px) scale(1, 1)' }
+    ], { duration: 1600, easing: 'cubic-bezier(.22, .7, .25, 1)' });
+    cur = r;
+    var a = anim;
+    a.onfinish = function () { if (anim === a) { anim = null; put(rect(active() || b)); cur = rect(active() || b); } };
+    a.oncancel = function () {};
+    try { waterText(from, r, b); } catch (e) {}
+    put0(r);
+  }
+
+  /* ===== 물방울 글씨 왜곡: 물방울이 지나가는 글씨가 물속처럼 일렁이며 늘어났다가 탱글하게 원래대로 돌아옴 ===== */
+  var NS = 'http://www.w3.org/2000/svg';
+  var wf = [], wAnims = [], wRaf = 0;
+  function buildFilters() {
+    if (wf.length) return;
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:fixed;width:1px;height:1px;left:-10px;top:-10px;opacity:0;overflow:hidden;pointer-events:none';
+    var n = bar.querySelectorAll('.filter-btn').length;
+    for (var i = 0; i < n; i++) {
+      var f = document.createElementNS(NS, 'filter');
+      f.setAttribute('id', 'rbWater' + i);
+      f.setAttribute('x', '-30%'); f.setAttribute('y', '-70%');
+      f.setAttribute('width', '160%'); f.setAttribute('height', '240%');
+      f.setAttribute('color-interpolation-filters', 'sRGB');
+      var t = document.createElementNS(NS, 'feTurbulence');
+      t.setAttribute('type', 'fractalNoise');
+      t.setAttribute('baseFrequency', '0.02 0.05');
+      t.setAttribute('numOctaves', '1');
+      t.setAttribute('seed', String(3 + i * 5));
+      t.setAttribute('result', 'n');
+      var d = document.createElementNS(NS, 'feDisplacementMap');
+      d.setAttribute('in', 'SourceGraphic'); d.setAttribute('in2', 'n');
+      d.setAttribute('scale', '0');
+      d.setAttribute('xChannelSelector', 'R'); d.setAttribute('yChannelSelector', 'G');
+      f.appendChild(t); f.appendChild(d); svg.appendChild(f);
+      wf.push({ t: t, d: d });
+    }
+    document.body.appendChild(svg);
+  }
+  function clearWater(btns) {
+    if (wRaf) { cancelAnimationFrame(wRaf); wRaf = 0; }
+    wAnims.forEach(function (x) { try { x.cancel(); } catch (e) {} });
+    wAnims = [];
+    btns.forEach(function (b) { b.style.filter = ''; b.style.webkitFilter = ''; });
+  }
+  function waterText(from, to, activeBtn) {
+    var btns = Array.prototype.slice.call(bar.querySelectorAll('.filter-btn'));
+    clearWater(btns);
+    var fi = -1;
+    btns.forEach(function (b, i) { if (fi < 0 && b.offsetLeft === from.x) fi = i; });
+    var ti = btns.indexOf(activeBtn);
+    if (fi < 0 || ti < 0 || fi === ti) return;
+    buildFilters();
+    var dir = ti > fi ? 1 : -1;
+    var plan = [];
+    plan.push({ i: fi, delay: 0, dur: 540, peak: 9, role: 'from' });
+    var step = dir, k = 0;
+    for (var m = fi + dir; m !== ti; m += dir) {
+      k++;
+      plan.push({ i: m, delay: 90 + k * 110, dur: 560, peak: 8, role: 'mid' });
+    }
+    plan.push({ i: ti, delay: 200 + k * 110, dur: 720, peak: 11, role: 'to' });
+
+    plan.forEach(function (p) {
+      var b = btns[p.i];
+      if (!b.animate) return;
+      var frames;
+      if (p.role === 'from') {
+        frames = [
+          { transform: 'translateX(0) scale(1, 1) skewX(0deg)' },
+          { transform: 'translateX(' + (dir * 7) + 'px) scale(1.2, .82) skewX(' + (-dir * 11) + 'deg)', offset: .3 },
+          { transform: 'translateX(0) scale(.96, 1.05) skewX(' + (dir * 3) + 'deg)', offset: .65 },
+          { transform: 'translateX(0) scale(1, 1) skewX(0deg)' }
+        ];
+      } else if (p.role === 'mid') {
+        frames = [
+          { transform: 'scale(1, 1) skewX(0deg)' },
+          { transform: 'scale(1.16, .85) skewX(' + (-dir * 8) + 'deg)', offset: .35 },
+          { transform: 'scale(.97, 1.04)', offset: .7 },
+          { transform: 'scale(1, 1) skewX(0deg)' }
+        ];
+      } else {
+        frames = [
+          { transform: 'translateX(0) scale(1, 1) skewX(0deg)' },
+          { transform: 'translateX(' + (-dir * 4) + 'px) scale(1.24, .78) skewX(' + (dir * 9) + 'deg)', offset: .26 },
+          { transform: 'translateX(0) scale(.92, 1.1) skewX(' + (-dir * 4) + 'deg)', offset: .52 },
+          { transform: 'translateX(0) scale(1.04, .97) skewX(0deg)', offset: .76 },
+          { transform: 'translateX(0) scale(1, 1) skewX(0deg)' }
+        ];
+      }
+      var an = b.animate(frames, { duration: p.dur, delay: p.delay, easing: 'ease-out', fill: 'backwards' });
+      wAnims.push(an);
+    });
+
+    var t0 = performance.now();
+    function tick(now) {
+      var live = false;
+      plan.forEach(function (p) {
+        var b = btns[p.i], u = (now - t0 - p.delay) / p.dur;
+        if (u < 0) { live = true; return; }
+        if (u >= 1) { b.style.filter = ''; return; }
+        live = true;
+        var amp = Math.pow(Math.sin(Math.PI * u), 1.4) * (1 - u * .3);
+        var w = wf[p.i];
+        w.d.setAttribute('scale', (p.peak * amp).toFixed(2));
+        w.t.setAttribute('baseFrequency', (0.018 + 0.02 * u).toFixed(4) + ' ' + (0.045 + 0.03 * u).toFixed(4));
+        var cssFilter = 'url(#rbWater' + p.i + ') blur(' + (amp * 1.1).toFixed(2) + 'px)';
+        b.style.webkitFilter = cssFilter;
+        b.style.filter = cssFilter;
+      });
+      wRaf = live ? requestAnimationFrame(tick) : 0;
+      if (!live) clearWater(btns);
+    }
+    wRaf = requestAnimationFrame(tick);
+  }
+
+  function put0(r) {   /* 애니메이션이 끝난 뒤 유지될 최종 값 */
+    drop.style.width = r.w + 'px';
+    drop.style.transform = 'translateX(' + r.x + 'px)';
+  }
+
+  /* 클릭 뒤 한 번만 이동을 시작해 어느 방향에서도 물방울 위치에서 이어간다. */
+  bar.addEventListener('pointerdown', function (e) {
+    if (e.target.closest && e.target.closest('.filter-btn')) lastActive = active();
+  }, true);
+  bar.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.filter-btn');
+    if (!b) return;
+    var startButton = lastActive;
+    pendingSelection = true;
+    if (selectionFrame) cancelAnimationFrame(selectionFrame);
+    selectionFrame = requestAnimationFrame(function () {
+      selectionFrame = 0;
+      var from = startButton && startButton.offsetWidth ? rect(startButton) : cur;
+      place(true, from);
+      lastActive = active();
+      pendingSelection = false;
+    });
+  });  /* 라벨의 (숫자)가 바뀌어 너비가 변하면 제자리 보정 */
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function () { if (!anim && !pendingSelection) place(false); });
+    ro.observe(bar);
+    bar.querySelectorAll('.filter-btn').forEach(function (b) { ro.observe(b); });
+  }
+  window.addEventListener('resize', function () { if (!anim) place(false); });
+  /* 테마 전환(무지개 켜짐/꺼짐) 감지 */
+  new MutationObserver(function () { place(false); }).observe(root, { attributes: true, attributeFilter: ['class'] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { place(false); });
+  lastActive = active();
+  place(false);
+})();
+</script>
+<script>
+/* 큰 제목이 접히는 헤더: 스크롤 정도(--hp 0~1)에 따라 큰 제목은 사라지고 상단 작은 바가 나타남 */
+(function () {
+  var bar = document.getElementById('cbar');
+  var head = document.querySelector('.header-area');
+  var menu = document.getElementById('menuBtn');
+  var tog = document.getElementById('themeToggleBtn');
+  var lab = document.getElementById('themeLabel');
+  if (!bar || !head || !menu || !tog || !lab) return;
+
+  var cMenu = bar.querySelector('.menu-btn');
+  var cTog = bar.querySelector('.theme-toggle-btn');
+  var cLab = bar.querySelector('.cbar-label');
+  cMenu.innerHTML = menu.innerHTML;                       // 메뉴 아이콘 복사
+  cMenu.addEventListener('click', function () { menu.click(); });
+  cTog.addEventListener('click', function () { tog.click(); });
+
+  function syncLabel() { cLab.textContent = lab.textContent; }   // 주간/야간 문구 동기화
+  syncLabel();
+  new MutationObserver(syncLabel).observe(lab, { childList: true, characterData: true, subtree: true });
+
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var p = Math.min(1, Math.max(0, (y - 36) / 48)).toFixed(3);
+    bar.style.setProperty('--hp', p);
+    head.style.setProperty('--hp', p);
+    bar.classList.toggle('on', p > 0.02);
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+<script>
+/* 무지개/유리 테마 전용: 카드가 그 자리에서 커지며 시간 선택 창으로 변함 (닫기는 기본 동작) */
+(function () {
+  var root = document.documentElement, ov = document.getElementById('overlay'), sheet = document.getElementById('sheet');
+  if (!ov || !sheet) return;
+  var OPEN_MS = 900, CLOSE_MS = 720;
+  var from = null, info = null, wasOpen = false, closing = false, mute = false, anims = [];
+  function ok() {
+    if (!root.classList.contains('rainbow') || !sheet.animate) return false;
+    return !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+  function geo(r) {   /* 카드 중심까지의 이동량과 크기 비율 */
+    var L = sheet.offsetLeft, T = sheet.offsetTop, W = sheet.offsetWidth, H = sheet.offsetHeight;
+    return {
+      dx: (r.left + r.width / 2) - (L + W / 2),
+      dy: (r.top + r.height / 2) - (T + H / 2),
+      sc: Math.max(.22, Math.min(r.width / W, r.height / H))
+    };
+  }
+  function cancelAll() { anims.forEach(function (a) { try { a.cancel(); } catch (e) {} }); anims = []; }
+  function finishClose() {
+    cancelAll(); closing = false; mute = true; sheet.style.transformOrigin = '';
+    ov.classList.remove('open');
+  }
+  document.addEventListener('click', function (e) {
+    var c = e.target.closest && e.target.closest('.card:not(.sk)');
+    from = c ? { r: c.getBoundingClientRect(), t: Date.now(), y: window.pageYOffset } : null;
+    if (closing) { cancelAll(); closing = false; sheet.style.transformOrigin = ''; }   /* 닫히는 중 다시 열면 바로 이어서 */
+  }, true);
+
+  function openAnim() {
+    var f = from.r; info = { r: f, y: from.y }; from = null;
+    var g = geo(f);
+    anims.push(sheet.animate([
+      { transform: 'translate(' + g.dx + 'px, ' + g.dy + 'px) scale(' + g.sc + ')', clipPath: 'inset(0px round 64px)', opacity: 0 },
+      { opacity: 1, offset: .3 },
+      { transform: 'translate(0px, 0px) scale(1.018)', clipPath: 'inset(0px round 28px)', opacity: 1, offset: .76, easing: 'ease-out' },
+      { transform: 'translate(0px, 0px) scale(1)', clipPath: 'inset(0px round 24px)', opacity: 1 }
+    ], { duration: OPEN_MS, easing: 'cubic-bezier(.3, .8, .3, 1)' }));
+  }
+
+  new MutationObserver(function () {
+    var isOpen = ov.classList.contains('open');
+    if (mute) { mute = false; wasOpen = isOpen; return; }
+    if (closing) { if (!isOpen) { mute = true; ov.classList.add('open'); } return; }
+    if (isOpen && !wasOpen) {
+      if (from && Date.now() - from.t < 600 && ok()) openAnim(); else info = null;
+    } else if (!isOpen) { info = null; }
+    wasOpen = isOpen;
+  }).observe(ov, { attributes: true, attributeFilter: ['class'] });
+})();
+
+/* 유리 테마: 1~7초 간격으로 랜덤 위치에서 별똥별을 지나가게 한다. */
+(function () {
+  var root = document.documentElement;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+  function launch() {
+    var glassMode = root.classList.contains('mono');
+    var rainbowNight = root.getAttribute('data-theme') === 'dark';
+    if (!root.classList.contains('rainbow') || (!glassMode && !rainbowNight) || !document.body) return;
+    var meteor = document.createElement('i');
+    meteor.className = 'glass-meteor';
+    meteor.setAttribute('aria-hidden', 'true');
+    var xDir = Math.random() < .5 ? -1 : 1;
+    var yDir = Math.random() < .5 ? -1 : 1;
+    var dx = xDir * (18 + Math.random() * 25);
+    var dy = yDir * (7 + Math.random() * 17);
+    var left = xDir > 0 ? Math.random() * 75 : 25 + Math.random() * 75;
+    var top = yDir > 0 ? 5 + Math.random() * 72 : 23 + Math.random() * 72;
+    var angle = Math.atan2(dy * window.innerHeight / 100, dx * window.innerWidth / 100) * 180 / Math.PI;
+    meteor.style.left = left + 'vw';
+    meteor.style.top = top + 'vh';
+    meteor.style.setProperty('--meteor-angle', angle + 'deg');
+    meteor.style.setProperty('--meteor-x', dx + 'vw');
+    meteor.style.setProperty('--meteor-y', dy + 'vh');
+    document.body.appendChild(meteor);
+    setTimeout(function () { meteor.remove(); }, 1900);
+  }
+  function scheduleNext() {
+    window.setTimeout(function () {
+      launch();
+      scheduleNext();
+    }, 1000 + Math.random() * 6000);
+  }
+  scheduleNext();
+})();</script>
 </body>
 </html>
